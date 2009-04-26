@@ -1,6 +1,6 @@
-============
-urlobject.py
-============
+===================
+urlobject.py v0.1.1
+===================
 
 ``URLObject`` is a utility class for manipulating URLs.
 
