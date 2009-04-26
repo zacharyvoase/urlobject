@@ -59,7 +59,7 @@ class URLObject(unicode):
         return unicode.__new__(cls,
             urlparse.urlunsplit((
                 encode_component(scheme),
-                encode_component(host.encode('idna')),
+                host.encode('idna'),
                 encode_component(path),
                 query,
                 encode_component(fragment)

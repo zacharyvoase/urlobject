@@ -10,5 +10,5 @@ setup(
     author='Zachary Voase',
     author_email='disturbyte@gmail.com',
     url='http://github.com/disturbyte/urlobject',
-    packages=['urlobject'],
+    py_modules=['urlobject'],
 )
