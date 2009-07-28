@@ -8,6 +8,9 @@ import urllib
 import urlparse
 
 
+__version__ = '0.3'
+
+
 URL_COMPONENTS = ('scheme', 'host', 'path', 'query', 'fragment')
 
 SCHEME_PORT_MAP = {
@@ -67,7 +70,7 @@ class URLObject(unicode):
     
     @classmethod
     def parse(cls, url):
-        return unicode.__new__(cls, url)
+        return cls(**dict(zip(URL_COMPONENTS, urlparse.urlsplit(url))))
     
     # Support for urlobj.scheme, urlobj.host, urlobj.path, etc.
     for i, attr in enumerate(URL_COMPONENTS):
@@ -104,7 +107,7 @@ class URLObject(unicode):
     
     @property
     def host(self):
-        return decode_component(urlparse.urlsplit(self)[1]).decode('idna')
+        return urlparse.urlsplit(self)[1].decode('idna')
     
     def with_host(self, host):
         return self.copy(host=host)

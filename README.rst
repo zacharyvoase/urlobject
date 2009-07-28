@@ -1,6 +1,6 @@
-===================
-urlobject.py v0.1.1
-===================
+=================
+urlobject.py v0.3
+=================
 
 ``URLObject`` is a utility class for manipulating URLs.
 
@@ -116,4 +116,4 @@ This software is licensed under the following MIT-style license:
 Author
 ======
 
-Zachary Voase can be found on `Twitter <http://twitter.com/disturbyte>`_.
+Zachary Voase can be found on `Twitter <http://twitter.com/zacharyvoase>`_.
