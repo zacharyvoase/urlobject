@@ -10,7 +10,7 @@ import urlparse
 
 __author__ = 'Zachary Voase (http://zacharyvoase.com) <zacharyvoase@me.com>'
 __url__ = 'http://bitbucket.org/zacharyvoase/urlobject/'
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 
 URL_COMPONENTS = ('scheme', 'host', 'path', 'query', 'fragment')
@@ -55,16 +55,11 @@ class URLObject(unicode):
     >>> new_url |= 'key', 'newvalue'
     >>> new_url
     <URLObject(u'http://example.com/place?key2=value2&key=newvalue') at 0x...>
-    >>> URLObject(path='/foo/bar/')
-    <URLObject(u'/foo/bar/') at 0x...>
     """
     
     def __new__(cls, host='', path='/', scheme='http', query=None, fragment=''):
         if not isinstance(query, basestring):
             query = encode_query(query or {}, doseq=True)
-        
-        if not host:
-            scheme = ''
         
         return unicode.__new__(cls,
             urlparse.urlunsplit((
