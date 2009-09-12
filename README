@@ -1,5 +1,5 @@
 <!--*-markdown-*-->
-# urlobject.py v0.3.2
+# urlobject.py v0.3.3
 
 `URLObject` is a utility class for manipulating URLs.
 
@@ -8,7 +8,7 @@
 Here is how you use the library:
     
     >>> from urlobject import URLObject
-    >>> url = URLObject(host='example.com')
+    >>> url = URLObject(scheme='http', host='example.com')
     >>> print url
     http://example.com/
     >>> print url / 'some' / 'path'
@@ -63,7 +63,9 @@ Here is how you use the library:
 ## Hints and tips
     
 * If a URL's scheme is `'http'` and you try to set the port to 80, it is equivalent to not specifying the port (same goes for `'https'`, `'ftp'` and `'ftps'` for their appropriate ports).
+
 * If you need to end the path with `'/'`, you can do either `url / ''` or `url / 'last_component/'`.
+
 * The query parameters are available as a list through the `query_list()` method and as a dictionary via `query_dict()`. By default, the latter method will return a dictionary with lists as the values, corresponding to potential multiple occurrences of the same key. You can just take the last value by passing the `seq=False` keyword argument to the method.
 
 * Since `URLObject` subclasses directly from Python's built-in `unicode`, you can pass URL objects straight into `urllib2.urlopen()`, JSON serializers, templating systems, etc. If you need a plain-old string or Unicode object, you can just call `str` or `unicode` on it.
