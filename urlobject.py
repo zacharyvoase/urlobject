@@ -10,7 +10,7 @@ import urlparse
 
 __author__ = 'Zachary Voase (http://zacharyvoase.com) <zacharyvoase@me.com>'
 __url__ = 'http://bitbucket.org/zacharyvoase/urlobject/'
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 
 
 URL_COMPONENTS = ('scheme', 'host', 'path', 'query', 'fragment')
@@ -160,7 +160,7 @@ class URLObject(unicode):
         return self.with_query(new_query)
     
     def set_query_param(self, key, value):
-        old_query = cgi.parse_qsl(self.query)
+        old_query = self.query_list()
         new_query = []
         
         for old_key, old_value in old_query:

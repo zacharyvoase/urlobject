@@ -76,7 +76,14 @@ class URLObjectTest(unittest.TestCase):
         self.assertEqual(
             (url & ('q', 'another')).query_dict(seq=False),
             {u'q': u'another'})
-        
+    
+    def test_unicode_query_strings(self):
+        url = URLObject(scheme='http', host='example.com', path='/')
+        url |= {'a': u'é'}
+        self.assertEqual(str(url), 'http://example.com/?a=%C3%A9')
+        url |= {'b': 'c'}
+        self.assertEqual(str(url), 'http://example.com/?a=%C3%A9&b=c')
+
 
 class URLObjectParseTest(unittest.TestCase):
     
