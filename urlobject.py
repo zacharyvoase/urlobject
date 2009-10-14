@@ -43,6 +43,7 @@ class URLObject(unicode):
     http://example.com/%C3%B1
     >>> url
     <URLObject(u'http://example.com/') at 0x...>
+    
     >>> new_url = url / 'place'
     >>> new_url
     <URLObject(u'http://example.com/place') at 0x...>
@@ -55,6 +56,16 @@ class URLObject(unicode):
     >>> new_url |= 'key', 'newvalue'
     >>> new_url
     <URLObject(u'http://example.com/place?key2=value2&key=newvalue') at 0x...>
+    
+    >>> auth_url = URLObject.parse(u'http://foo:bar@example.com/')
+    >>> auth_url.host
+    u'foo:bar@example.com'
+    >>> auth_url.user
+    u'foo'
+    >>> auth_url.password
+    u'bar'
+    >>> auth_url.host_noauth
+    u'example.com'
     """
     
     def __new__(cls, host='', path='/', scheme='', query=None, fragment=''):
@@ -110,6 +121,22 @@ class URLObject(unicode):
     @property
     def host(self):
         return urlparse.urlsplit(self)[1].decode('idna')
+    
+    @property
+    def host_noauth(self):
+        return urllib.splituser(self.host)[1]
+    
+    @property
+    def user(self):
+        creds = urllib.splituser(self.host)[0]
+        if creds:
+            return urllib.splitpasswd(creds)[0]
+    
+    @property
+    def password(self):
+        creds = urllib.splituser(self.host)[0]
+        if creds:
+            return urllib.splitpasswd(creds)[1]
     
     def with_host(self, host):
         return self.copy(host=host)
