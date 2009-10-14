@@ -10,7 +10,7 @@ import urlparse
 
 __author__ = 'Zachary Voase (http://zacharyvoase.com) <zacharyvoase@me.com>'
 __url__ = 'http://bitbucket.org/zacharyvoase/urlobject/'
-__version__ = '0.3.4'
+__version__ = '0.4'
 
 
 URL_COMPONENTS = ('scheme', 'host', 'path', 'query', 'fragment')
