@@ -9,6 +9,6 @@ setup(
     description='A utility class for manipulating URLs.',
     author='Zachary Voase',
     author_email='zacharyvoase@me.com',
-    url='http://bitbucket.org/zacharyvoase/urlobject/',
+    url='http://github.com/zacharyvoase/urlobject',
     py_modules=['urlobject'],
 )
