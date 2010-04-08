@@ -1,5 +1,3 @@
-<!--*-markdown-*-->
-
 # urlobject.py v0.5
 
 `URLObject` is a utility class for manipulating URLs.
