@@ -128,6 +128,14 @@ class URLObjectParseTest(unittest.TestCase):
         self.assertEqual(unicode(url), 'http://www.google.com/search?q=a%20string%20with%20escapes')
         self.assertEqual(url.query, 'q=a%20string%20with%20escapes')
 
+    def test_multiple_parses_are_idempotent(self):
+        url = u'http://xn-hllo-bpa.com/path%20withspaces?query=es%25capes&foo=bar#frag%28withescapes%29'
+        parse1 = URLObject.parse(url)
+        self.assertEqual(unicode(url), unicode(parse1))
+        parse2 = URLObject.parse(unicode(parse1))
+        self.assertEqual(unicode(url), unicode(parse2))
+        self.assertEqual(unicode(parse1), unicode(parse2))
+
 
 if __name__ == '__main__':
     doctest.testmod(urlobject, optionflags=doctest.ELLIPSIS)
