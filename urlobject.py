@@ -24,10 +24,10 @@ SCHEME_PORT_MAP = {
 
 
 class URLObject(unicode):
-    
+
     """
     A utility class for manipulating URLs.
-    
+
     >>> url = URLObject(scheme='http', host='example.com')
     >>> print url
     http://example.com/
@@ -43,7 +43,7 @@ class URLObject(unicode):
     http://example.com/%C3%B1
     >>> url
     <URLObject(u'http://example.com/') at 0x...>
-    
+
     >>> new_url = url / 'place'
     >>> new_url
     <URLObject(u'http://example.com/place') at 0x...>
@@ -56,7 +56,7 @@ class URLObject(unicode):
     >>> new_url |= 'key', 'newvalue'
     >>> new_url
     <URLObject(u'http://example.com/place?key2=value2&key=newvalue') at 0x...>
-    
+
     >>> auth_url = URLObject.parse(u'http://foo:bar@example.com/')
     >>> auth_url.host
     u'foo:bar@example.com'
@@ -67,11 +67,11 @@ class URLObject(unicode):
     >>> auth_url.host_noauth
     u'example.com'
     """
-    
+
     def __new__(cls, host='', path='/', scheme='', query=None, fragment=''):
         if not isinstance(query, basestring):
             query = encode_query(query or {}, doseq=True)
-        
+
         return unicode.__new__(cls,
             urlparse.urlunsplit((
                 encode_component(scheme),
@@ -80,97 +80,102 @@ class URLObject(unicode):
                 query,
                 encode_component(fragment)
             )))
-    
+
     @classmethod
     def parse(cls, url):
-        return cls(**dict(zip(URL_COMPONENTS, urlparse.urlsplit(url))))
-    
+        scheme, host, path, query, fragment = urlparse.urlsplit(url)
+        return cls(scheme=decode_component(scheme),
+                   host=host.decode('idna'),
+                   path=decode_component(path),
+                   query=query,
+                   fragment=decode_component(fragment))
+
     # Support for urlobj.scheme, urlobj.host, urlobj.path, etc.
     for i, attr in enumerate(URL_COMPONENTS):
         vars()[attr] = (
             lambda index:
                 property(lambda self: decode_component(
                     urlparse.urlsplit(self)[index])))(i)
-        
+
         vars()['with_' + attr] = (
             lambda param:
                 lambda self, value: self.copy(**{param: value}))(attr)
-    
+
     # Supports without_path(), without_query() and without_fragment().
     for i, attr in enumerate(URL_COMPONENTS[2:]):
         vars()['without_' + attr] = (
             lambda param:
                 lambda self: self.copy(**{param: ''}))(attr)
-    
+
     def components(self):
         return dict(zip(URL_COMPONENTS,
                         map(partial(getattr, self), URL_COMPONENTS)))
-    
+
     def copy(self, **kwargs):
         components = self.components()
         components.update(kwargs)
         return type(self)(**components)
-    
+
     ## Scheme-related methods.
-    
+
     def secure(self):
         return self.with_scheme(self.scheme + 's')
-    
+
     ## Host-related methods.
-    
+
     @property
     def host(self):
         return urlparse.urlsplit(self)[1].decode('idna')
-    
+
     @property
     def host_noauth(self):
         return urllib.splituser(self.host)[1]
-    
+
     @property
     def user(self):
         creds = urllib.splituser(self.host)[0]
         if creds:
             return urllib.splitpasswd(creds)[0]
-    
+
     @property
     def password(self):
         creds = urllib.splituser(self.host)[0]
         if creds:
             return urllib.splitpasswd(creds)[1]
-    
+
     def with_host(self, host):
         return self.copy(host=host)
-    
+
     ## Port-related properties and methods.
-    
+
     @property
     def port(self):
         host, port = urllib.splitnport(self.host, defport=None)
         if (self.scheme in SCHEME_PORT_MAP) and (not port):
             return SCHEME_PORT_MAP[self.scheme]
         return port
-    
+
     def with_port(self, port):
         if self.scheme in SCHEME_PORT_MAP:
             if SCHEME_PORT_MAP[self.scheme] == port:
                 return self.without_port()
-        
+
         host, _ = urllib.splitport(self.host)
         return self.with_host(host + ':' + str(port))
-    
+
     def without_port(self):
         return self.copy(host=urllib.splitport(self.host)[0])
-    
+
     ## Query-related methods.
-    
+
     # Overrides the automatically-defined one.
     @property
     def query(self):
         return urlparse.urlsplit(self)[3]
-    
+
     def query_list(self):
         return decode_query(self.query)
-    
+
     def query_dict(self, seq=True):
         if seq:
             decoded = decode_query(self.query)
@@ -178,30 +183,30 @@ class URLObject(unicode):
             for key, value in decoded:
                 query_dict.setdefault(key, []).append(value)
             return query_dict
-        
+
         return dict(decode_query(self.query))
-    
+
     def add_query_param(self, key, value):
         new_query = decode_query(self.query)
         new_query.append((key, ensure_unicode(value)))
         return self.with_query(new_query)
-    
+
     def set_query_param(self, key, value):
         old_query = self.query_list()
         new_query = []
-        
+
         for old_key, old_value in old_query:
             if old_key != key:
                 new_query.append((old_key, old_value))
         new_query.append((key, ensure_unicode(value)))
-        
+
         return self.with_query(new_query)
-    
+
     ## Path-related methods.
-    
+
     def path_list(self):
         return filter(None, self.path.split('/'))
-    
+
     def add_path_component(self, path):
         if path.startswith('/'):
             new_path = path
@@ -210,22 +215,22 @@ class URLObject(unicode):
         else:
             new_path = self.path + '/' + path
         return self.with_path(new_path)
-    
+
     def parent(self):
         try:
             parent_path = self.path[:self.path.rindex('/')]
         except IndexError:
             parent_path = '/'
         return self.with_path(parent_path)
-    
+
     def root(self):
         return self.with_path('/')
-    
+
     ## Additional magic methods.
-    
+
     def __repr__(self):
         return '<URLObject(%r) at 0x%x>' % (unicode(self), id(self))
-    
+
     def __and__(self, query_param):
         if hasattr(query_param, 'items'):
             new = self
@@ -234,7 +239,7 @@ class URLObject(unicode):
             return new
         else:
             return self.add_query_param(*query_param)
-    
+
     def __or__(self, query_param):
         if hasattr(query_param, 'items'):
             new = self
@@ -243,7 +248,7 @@ class URLObject(unicode):
             return new
         else:
             return self.set_query_param(*query_param)
-    
+
     __div__ = add_path_component
     __floordiv__ = with_path
     __mul__ = with_fragment
