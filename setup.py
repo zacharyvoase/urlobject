@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name='URLObject',
-    version='0.5.1',
+    version='0.5.2',
     description='A utility class for manipulating URLs.',
     author='Zachary Voase',
     author_email='z@zacharyvoase.com',

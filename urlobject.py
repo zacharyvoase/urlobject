@@ -2,18 +2,17 @@
 # urlobject.py - A utility class for operating on URLs.
 
 from functools import partial
-import cgi
 import copy
 import urllib
 import urlparse
 
 
-__author__ = 'Zachary Voase (http://zacharyvoase.com) <zacharyvoase@me.com>'
+__author__ = 'Zachary Voase (http://zacharyvoase.com) <z@zacharyvoase.com>'
 __url__ = 'http://bitbucket.org/zacharyvoase/urlobject/'
-__version__ = '0.5'
+__version__ = '0.5.2'
 
 
-URL_COMPONENTS = ('scheme', 'host', 'path', 'query', 'fragment')
+URL_COMPONENTS = ('scheme', 'host', 'path', 'matrix', 'query', 'fragment')
 
 SCHEME_PORT_MAP = {
     'http': 80,
@@ -33,10 +32,10 @@ class Safe(unicode):
         return self._string
 
 class URLObject(unicode):
-
+    
     """
     A utility class for manipulating URLs.
-
+    
     >>> url = URLObject(scheme='http', host='example.com')
     >>> print url
     http://example.com/
@@ -52,7 +51,7 @@ class URLObject(unicode):
     http://example.com/%C3%B1
     >>> url
     <URLObject(u'http://example.com/') at 0x...>
-
+    
     >>> new_url = url / 'place'
     >>> new_url
     <URLObject(u'http://example.com/place') at 0x...>
@@ -65,7 +64,7 @@ class URLObject(unicode):
     >>> new_url |= 'key', 'newvalue'
     >>> new_url
     <URLObject(u'http://example.com/place?key2=value2&key=newvalue') at 0x...>
-
+    
     >>> auth_url = URLObject.parse(u'http://foo:bar@example.com/')
     >>> auth_url.host
     u'foo:bar@example.com'
@@ -76,115 +75,155 @@ class URLObject(unicode):
     >>> auth_url.host_noauth
     u'example.com'
     """
-
-    def __new__(cls, host='', path='/', scheme='', query=None, fragment=''):
+    
+    def __new__(cls, host='', path='/', scheme='', matrix=None, query=None, fragment=''):
         if not isinstance(query, basestring):
             query = encode_query(query or {}, doseq=True)
-
+        if not isinstance(matrix, basestring):
+            matrix = encode_matrix(matrix or {}, doseq=True)
+        
         return unicode.__new__(cls,
-            urlparse.urlunsplit((
+            urlparse.urlunparse((
                 encode_component(scheme),
                 host.encode('idna'),
                 encode_component(path),
+                matrix,
                 query,
                 encode_component(fragment)
             )))
-
+    
     @classmethod
     def parse(cls, url):
-        scheme, host, path, query, fragment = urlparse.urlsplit(url)
+        scheme, host, path, matrix, query, fragment = urlparse.urlsplit(url)
         return cls(scheme=decode_component(scheme),
                    host=host.decode('idna'),
                    path=decode_component(path),
+                   matrix=matrix,
                    query=query,
                    fragment=decode_component(fragment))
-
+    
     # Support for urlobj.scheme, urlobj.host, urlobj.path, etc.
     for i, attr in enumerate(URL_COMPONENTS):
         vars()[attr] = (
             lambda index:
                 property(lambda self: decode_component(
-                    urlparse.urlsplit(self)[index])))(i)
-
+                    urlparse.urlparse(self)[index])))(i)
+        
         vars()['with_' + attr] = (
             lambda param:
                 lambda self, value: self.copy(**{param: value}))(attr)
-
+    
     # Supports without_path(), without_query() and without_fragment().
     for i, attr in enumerate(URL_COMPONENTS[2:]):
         vars()['without_' + attr] = (
             lambda param:
                 lambda self: self.copy(**{param: ''}))(attr)
-
+    
     def components(self):
         return dict(zip(URL_COMPONENTS,
                         map(partial(getattr, self), URL_COMPONENTS)))
-
+    
     def copy(self, **kwargs):
         components = self.components()
         components.update(kwargs)
         return type(self)(**components)
-
+    
     ## Scheme-related methods.
-
+    
     def secure(self):
         return self.with_scheme(self.scheme + 's')
-
+    
     ## Host-related methods.
-
+    
     @property
     def host(self):
-        return urlparse.urlsplit(self)[1].decode('idna')
-
+        return urlparse.urlparse(self)[1].decode('idna')
+    
     @property
     def host_noauth(self):
         return urllib.splituser(self.host)[1]
-
+    
     @property
     def user(self):
         creds = urllib.splituser(self.host)[0]
         if creds:
             return urllib.splitpasswd(creds)[0]
-
+    
     @property
     def password(self):
         creds = urllib.splituser(self.host)[0]
         if creds:
             return urllib.splitpasswd(creds)[1]
-
+    
     def with_host(self, host):
         return self.copy(host=host)
-
+    
     ## Port-related properties and methods.
-
+    
     @property
     def port(self):
         host, port = urllib.splitnport(self.host, defport=None)
         if (self.scheme in SCHEME_PORT_MAP) and (not port):
             return SCHEME_PORT_MAP[self.scheme]
         return port
-
+    
     def with_port(self, port):
         if self.scheme in SCHEME_PORT_MAP:
             if SCHEME_PORT_MAP[self.scheme] == port:
                 return self.without_port()
-
+        
         host, _ = urllib.splitport(self.host)
         return self.with_host(host + ':' + str(port))
-
+    
     def without_port(self):
         return self.copy(host=urllib.splitport(self.host)[0])
-
-    ## Query-related methods.
+    
+    ## Matrix-related methods.
 
     # Overrides the automatically-defined one.
     @property
-    def query(self):
-        return urlparse.urlsplit(self)[3]
+    def matrix(self):
+        return urlparse.urlparse(self)[3]
 
+    def matrix_list(self):
+        return decode_matrix(self.matrix)
+
+    def matrix_dict(self, seq=True):
+        if seq:
+            decoded = decode_matrix(self.matrix)
+            matrix_dict = {}
+            for key, value in decoded:
+                matrix_dict.setdefault(key, []).append(value)
+            return matrix_dict
+
+        return dict(decode_matrix(self.matrix))
+
+    def add_matrix_param(self, key, value):
+        new_matrix = decode_matrix(self.matrix)
+        new_matrix.append((key, ensure_unicode(value)))
+        return self.with_matrix(new_matrix)
+
+    def set_matrix_param(self, key, value):
+        old_matrix = self.matrix_list()
+        new_matrix = []
+
+        for old_key, old_value in old_matrix:
+            if old_key != key:
+                new_matrix.append((old_key, old_value))
+        new_matrix.append((key, ensure_unicode(value)))
+
+        return self.with_matrix(new_matrix)
+    
+    ## Query-related methods.
+    
+    # Overrides the automatically-defined one.
+    @property
+    def query(self):
+        return urlparse.urlparse(self)[4]
+    
     def query_list(self):
         return decode_query(self.query)
-
+    
     def query_dict(self, seq=True):
         if seq:
             decoded = decode_query(self.query)
@@ -192,30 +231,30 @@ class URLObject(unicode):
             for key, value in decoded:
                 query_dict.setdefault(key, []).append(value)
             return query_dict
-
+        
         return dict(decode_query(self.query))
-
+    
     def add_query_param(self, key, value):
         new_query = decode_query(self.query)
         new_query.append((key, ensure_unicode(value)))
         return self.with_query(new_query)
-
+    
     def set_query_param(self, key, value):
         old_query = self.query_list()
         new_query = []
-
+        
         for old_key, old_value in old_query:
             if old_key != key:
                 new_query.append((old_key, old_value))
         new_query.append((key, ensure_unicode(value)))
-
+        
         return self.with_query(new_query)
-
+    
     ## Path-related methods.
-
+    
     def path_list(self):
         return filter(None, self.path.split('/'))
-
+    
     def add_path_component(self, path):
         if path.startswith('/'):
             new_path = path
@@ -224,22 +263,22 @@ class URLObject(unicode):
         else:
             new_path = self.path + '/' + path
         return self.with_path(new_path)
-
+    
     def parent(self):
         try:
             parent_path = self.path[:self.path.rindex('/')]
         except IndexError:
             parent_path = '/'
         return self.with_path(parent_path)
-
+    
     def root(self):
         return self.with_path('/')
-
+    
     ## Additional magic methods.
-
+    
     def __repr__(self):
         return '<URLObject(%r) at 0x%x>' % (unicode(self), id(self))
-
+    
     def __and__(self, query_param):
         if hasattr(query_param, 'items'):
             new = self
@@ -248,7 +287,7 @@ class URLObject(unicode):
             return new
         else:
             return self.add_query_param(*query_param)
-
+    
     def __or__(self, query_param):
         if hasattr(query_param, 'items'):
             new = self
@@ -257,7 +296,7 @@ class URLObject(unicode):
             return new
         else:
             return self.set_query_param(*query_param)
-
+    
     __div__ = add_path_component
     __floordiv__ = with_path
     __mul__ = with_fragment
@@ -319,6 +358,22 @@ def decode_component(component):
     return urllib.unquote(str(component)).decode('utf-8')
 
 
+def encode_matrix(params, doseq=False):
+    if hasattr(params, 'items'):
+        params = params.items()
+    if doseq:
+        params = transform_doseq(params)
+    return ';'.join('='.join(map(encode_component, param)) for param in params)
+
+        
+def decode_matrix(matrix):
+    decoded = []
+    for i in matrix.split(';'):
+        c = i.split('=')
+        decoded.append(c[0].decode('utf-8'), c[1].decode('utf-8'))
+    return decoded
+
+
 def encode_query(params, doseq=False):
     if hasattr(params, 'items'):
         params = params.items()
@@ -340,7 +395,7 @@ def transform_doseq(items):
 
 def decode_query(query):
     return [(key.decode('utf-8'), value.decode('utf-8'))
-            for key, value in cgi.parse_qsl(str(query))]
+            for key, value in urlparse.parse_qsl(str(query))]
 
 
 if __name__ == '__main__':
