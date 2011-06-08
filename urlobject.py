@@ -22,6 +22,15 @@ SCHEME_PORT_MAP = {
     'ftps': 990,
 }
 
+class Safe(unicode):
+    
+    _string = ''
+    
+    def __init__(self, string):
+        self._string = string
+        
+    def __unicode__(self):
+        return self._string
 
 class URLObject(unicode):
 
@@ -283,7 +292,7 @@ URL_ESCAPE_RANGES = [
 
 
 def ensure_unicode(obj):
-    if isinstance(obj, unicode):
+    if isinstance(obj, unicode) or isinstance(obj, Safe):
         return obj
     elif isinstance(obj, str):
         return obj.decode('utf-8')
@@ -291,6 +300,8 @@ def ensure_unicode(obj):
 
 
 def encode_component(component):
+    if isinstance(component, Safe):
+        return component
     if isinstance(component, unicode):
         encoded_list = []
         for unichar in component:
