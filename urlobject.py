@@ -94,7 +94,7 @@ class URLObject(unicode):
     
     @classmethod
     def parse(cls, url):
-        scheme, host, path, matrix, query, fragment = urlparse.urlsplit(url)
+        scheme, host, path, matrix, query, fragment = urlparse.urlparse(url)
         return cls(scheme=decode_component(scheme),
                    host=host.decode('idna'),
                    path=decode_component(path),
