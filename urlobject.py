@@ -329,7 +329,7 @@ def transform_doseq(items):
 
 def decode_query(query):
     return [(key.decode('utf-8'), value.decode('utf-8'))
-            for key, value in cgi.parse_qsl(str(query))]
+            for key, value in cgi.parse_qsl(str(query), keep_blank_values=True)]
 
 
 if __name__ == '__main__':
