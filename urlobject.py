@@ -8,9 +8,9 @@ import urllib
 import urlparse
 
 
-__author__ = 'Zachary Voase (http://zacharyvoase.com) <zacharyvoase@me.com>'
-__url__ = 'http://bitbucket.org/zacharyvoase/urlobject/'
-__version__ = '0.5.2'
+__author__ = 'Zachary Voase <z@zacharyvoase.com>'
+__url__ = 'http://github.com/zacharyvoase/urlobject/'
+__version__ = '0.6.0'
 
 
 URL_COMPONENTS = ('scheme', 'host', 'path', 'query', 'fragment')
