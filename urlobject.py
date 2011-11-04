@@ -178,28 +178,26 @@ class URLObject(unicode):
 
     def query_dict(self, seq=True):
         if seq:
-            decoded = decode_query(self.query)
             query_dict = {}
-            for key, value in decoded:
+            for key, value in self.query_list():
                 query_dict.setdefault(key, []).append(value)
             return query_dict
 
-        return dict(decode_query(self.query))
+        return dict(self.query_list())
 
     def add_query_param(self, key, value):
-        new_query = decode_query(self.query)
+        new_query = self.query_list()
         new_query.append((key, ensure_unicode(value)))
         return self.with_query(new_query)
 
     def set_query_param(self, key, value):
-        old_query = self.query_list()
-        new_query = []
-
-        for old_key, old_value in old_query:
-            if old_key != key:
-                new_query.append((old_key, old_value))
+        new_query = [(k, v) for k, v in self.query_list() if k != key]
         new_query.append((key, ensure_unicode(value)))
 
+        return self.with_query(new_query)
+
+    def without_query_param(self, key):
+        new_query = [(k, v) for k, v in self.query_list() if k != key]
         return self.with_query(new_query)
 
     ## Path-related methods.
