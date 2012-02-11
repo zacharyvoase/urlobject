@@ -32,6 +32,11 @@ class URLObjectPropertyTest(unittest.TestCase):
     def test_netloc_returns_netloc(self):
         assert self.url.netloc == u'github.com'
 
+    def test_hostname_returns_hostname(self):
+        assert self.url.hostname == u'github.com'
+        url = URLObject("https://user:pass@github.com:443")
+        assert url.hostname == u'github.com'
+
     def test_port_returns_port_or_None(self):
         assert self.url.port is None
         assert URLObject("https://github.com:412").port == 412
