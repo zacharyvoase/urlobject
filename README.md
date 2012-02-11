@@ -29,6 +29,8 @@ easier to manipulate URLs. All the basic slots from urlsplit are there:
     (None, None)
     >>> print url.port
     None
+    >>> url.default_port
+    80
     >>> url.path
     URLPath(u'/zacharyvoase/urlobject')
     >>> url.query
