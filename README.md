@@ -18,7 +18,7 @@ easier to manipulate URLs. All the basic slots from urlsplit are there:
     >>> url
     URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs#foo')
     >>> unicode(url)
-    u'https://github.com/zacharyvoase/urlobject'
+    u'https://github.com/zacharyvoase/urlobject?spam=eggs#foo'
     >>> url.scheme
     u'https'
     >>> url.netloc
