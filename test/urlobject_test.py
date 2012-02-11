@@ -1,3 +1,5 @@
+import unittest
+
 from urlobject import URLObject
 
 
