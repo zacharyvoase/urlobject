@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from distutils.core import setup
+from distribute_setup import use_setuptools; use_setuptools()
+from setuptools import setup, find_packages
+
 
 setup(
     name='URLObject',
@@ -11,5 +13,5 @@ setup(
     author_email='z@zacharyvoase.com',
     url='http://github.com/zacharyvoase/urlobject',
     package_dir={'': 'lib'},
-    packages=['urlobject'],
+    packages=find_packages(where='lib'),
 )
