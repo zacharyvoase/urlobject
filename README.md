@@ -1,73 +1,138 @@
-# urlobject.py v0.5
+# URLObject 2
 
-`URLObject` is a utility class for manipulating URLs.
+`URLObject` is a utility class for manipulating URLs. The latest incarnation of
+this library builds upon the ideas of its predecessor, but aims for a clearer
+API, focusing on proper method names over operator overrides. It's also being
+developed from the ground up in a test-driven manner, and has full Sphinx
+documentation.
 
-## Example Usage
+## Tour
 
-Here is how you use the library:
-    
     >>> from urlobject import URLObject
-    >>> url = URLObject(scheme='http', host='example.com')
-    >>> print url
-    http://example.com/
-    >>> print url / 'some' / 'path'
-    http://example.com/some/path
-    >>> print url & ('key', 'value')
-    http://example.com/?key=value
-    >>> print url & ('key', 'value') & ('key2', 'value2')
-    http://example.com/?key=value&key2=value2
-    >>> print url * 'fragment'
-    http://example.com/#fragment
-    >>> print url / u'\N{LATIN SMALL LETTER N WITH TILDE}'
-    http://example.com/%C3%B1
+
+Create a URLObject with a string representing a URL. `URLObject` is a regular
+subclass of `unicode`, it just has several properties and methods which make it
+easier to manipulate URLs. All the basic slots from urlsplit are there:
+
+    >>> url = URLObject("https://github.com/zacharyvoase/urlobject?spam=eggs#foo")
     >>> url
-    <URLObject(u'http://example.com/') at 0x...>
-    >>> new_url = url / 'place'
-    >>> new_url
-    <URLObject(u'http://example.com/place') at 0x...>
-    >>> new_url &= 'key', 'value'
-    >>> new_url
-    <URLObject(u'http://example.com/place?key=value') at 0x...>
-    >>> new_url &= 'key2', 'value2'
-    >>> new_url
-    <URLObject(u'http://example.com/place?key=value&key2=value2') at 0x...>
-    >>> new_url |= 'key', 'newvalue'
-    >>> new_url
-    <URLObject(u'http://example.com/place?key2=value2&key=newvalue') at 0x...>
-    
-## Important points to note
-    
-* URLObjects are completely unicode-aware (they subclass `unicode`). This also means that international hostnames will be encoded to IDNA format, and international characters in pathnames will be automatically escaped. You should continue using unicode values for everything; the various components will be en/decoded on-the-fly.
+    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs#foo')
+    >>> unicode(url)
+    u'https://github.com/zacharyvoase/urlobject'
+    >>> url.scheme
+    u'https'
+    >>> url.netloc
+    u'github.com'
+    >>> url.hostname
+    u'github.com'
+    >>> (url.user, url.password)
+    (None, None)
+    >>> print url.port
+    None
+    >>> url.path
+    URLPath(u'/zacharyvoase/urlobject')
+    >>> url.query
+    QueryString(u'spam=eggs')
+    >>> url.fragment
+    u'foo'
 
-* `url & (key, value)` adds `key=value` to URL, even if `key` is already present as a query parameter. This allows you to have multiple appearances of `key` in the query.
+You can replace any of these slots using a `with_*()` method. Remember
+that, because `unicode` (and therefore `URLObject`) is immutable, these methods
+all return new URLs:
 
-* `url | (key, value)` adds `key=value` to URL, removing any previous appearance of `key` in the query parameters.
+    >>> url.with_scheme('http')
+    URLObject('http://github.com/zacharyvoase/urlobject?spam=eggs#foo')
+    >>> url.with_netloc('example.com')
+    URLObject('https://example.com/zacharyvoase/urlobject?spam=eggs#foo')
+    >>> url.with_auth('alice', '1234')
+    URLObject('https://alice:1234@github.com/zacharyvoase/urlobject?spam=eggs#foo')
+    >>> url.with_path('/some_page')
+    URLObject('https://github.com/some_page?spam=eggs#foo')
+    >>> url.with_query('funtimes=yay')
+    URLObject('https://github.com/zacharyvoase/urlobject?funtimes=yay#foo')
+    >>> url.with_fragment('example')
+    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs#example')
 
-* `url & dictionary` and `url | dictionary` work similarly to their `(key, value)` counterparts, only they add every key, value pair in the dictionary to the query string. You can also pass in a list of key, value pairs.
+For the query and fragment, `without_` methods also exist:
 
-* `url / 'path'` adds `'path'` to the current path, quoting special characters if necessary.
+    >>> url.without_query()
+    URLObject('https://github.com/zacharyvoase/urlobject#foo')
+    >>> url.without_fragment()
+    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs')
 
-* `url // 'path'` sets the path to `'path'`, removing the current path if present.
 
-* `url * 'fragment'` sets the fragment to `'fragment'`.
+### Path
 
-* `url ^ 123` sets the port number to `123`.
+The `path` property is an instance of `URLPath`, which has several methods and
+properties for manipulating the path string:
 
-* `url.with_*(value)` can be done with scheme, host, port, path, query and fragment, returning a new URL object with the value in that place.
+    >>> url.path
+    URLPath(u'/zacharyvoase/urlobject')
+    >>> url.path.parent
+    URLPath(u'/zacharyvoase')
+    >>> url.path.segments
+    ('zacharyvoase', 'urlobject')
+    >>> url.path.add_segment('subnode')
+    URLPath(u'/zacharyvoase/urlobject/subnode')
+    >>> url.path.root
+    URLPath(u'/')
 
-* `url.without_port()`, `url.without_path()`, `url.without_query()` and `url.without_fragment()` all exist and do something obvious.
+Some of these are aliased on the URL itself:
 
-* Operations return a *new* URL object (URL objects are immutable).
+    >>> url.parent
+    URLObject('https://github.com/zacharyvoase?spam=eggs#foo')
+    >>> url.add_path_segment('subnode')
+    URLObject('https://github.com/zacharyvoase/urlobject/subnode?spam=eggs#foo')
+    >>> url.root
+    URLObject('https://github.com/?spam=eggs#foo')
 
-## Hints and tips
-    
-* If a URL's scheme is `'http'` and you try to set the port to 80, it is equivalent to not specifying the port (same goes for `'https'`, `'ftp'` and `'ftps'` for their appropriate ports).
 
-* If you need to end the path with `'/'`, you can do either `url / ''` or `url / 'last_component/'`.
+### Query string
 
-* The query parameters are available as a list through the `query_list()` method and as a dictionary via `query_dict()`. By default, the latter method will return a dictionary with lists as the values, corresponding to potential multiple occurrences of the same key. You can just take the last value by passing the `seq=False` keyword argument to the method.
+The `query` property is an instance of `QueryString`, so you can access
+sub-attributes of that with richer representations of the query string:
 
-* Since `URLObject` subclasses directly from Python's built-in `unicode`, you can pass URL objects straight into `urllib2.urlopen()`, JSON serializers, templating systems, etc. If you need a plain-old string or Unicode object, you can just call `str` or `unicode` on it.
+    >>> url.query
+    QueryString(u'spam=eggs')
+    >>> url.query.list
+    [(u'spam', u'eggs')]
+    >>> url.query.dict
+    {u'spam': u'eggs'}
+    >>> url.query.multi_dict
+    {u'spam': [u'eggs']}
+
+Modifying the query string is easy, too. You can 'add' or 'set' parameters: any
+method beginning with `add_` will allow you to use the same parameter name
+multiple times in the query string; methods beginning with `set_` will only
+allow one value for a given parameter name. Don't forget that each method will
+return a *new* `QueryString` instance:
+
+    >>> url.query.add_param(u'spam', u'ham')
+    QueryString(u'spam=eggs&spam=ham')
+    >>> url.query.set_param(u'spam', u'ham')
+    QueryString(u'spam=ham')
+    >>> url.query.add_params({u'spam': u'ham', u'foo': u'bar'})
+    QueryString(u'spam=eggs&spam=ham&foo=bar')
+    >>> url.query.set_params({u'spam': u'ham', u'foo': u'bar'})
+    QueryString(u'spam=ham&foo=bar')
+
+Delete parameters with `del_param()` and `del_params()`. These will remove all
+appearances of the requested parameter name from the `QueryString`:
+
+    >>> url.query.del_param(u'spam')
+    QueryString(u'')
+    >>> url.query.add_params({u'foo': u'bar'}).del_params(['spam', 'foo'])
+    QueryString(u'')
+
+Again, some of these methods are aliased on the `URLObject` directly:
+
+    >>> url.add_query_param(u'spam', u'ham')
+    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs&spam=ham#foo')
+    >>> url.set_query_param(u'spam', u'ham')
+    URLObject('https://github.com/zacharyvoase/urlobject?spam=ham#foo')
+    >>> url.del_query_param(u'spam')
+    URLObject('https://github.com/zacharyvoase/urlobject#foo')
+
 
 ## (Un)license
 
