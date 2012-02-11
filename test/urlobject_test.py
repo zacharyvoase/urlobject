@@ -51,17 +51,17 @@ class URLObjectPropertyTest(unittest.TestCase):
     def test_fragment_returns_fragment(self):
         assert self.url.fragment == u'foo'
 
-    def test_auth_properties_can_parse_user_and_password(self):
+    def test_auth_properties_can_parse_username_and_password(self):
         url = URLObject(u'https://zack:12345@github.com/')
-        assert url.user == u'zack'
+        assert url.username == u'zack'
         assert url.password == u'12345'
 
-    def test_auth_properties_can_parse_user(self):
+    def test_auth_properties_can_parse_username(self):
         url = URLObject(u'https://zack@github.com/')
-        assert url.user == u'zack'
+        assert url.username == u'zack'
         assert url.password is None
 
-    def test_auth_properties_return_None_with_no_user_or_password(self):
+    def test_auth_properties_return_None_with_no_username_or_password(self):
         url = URLObject(u'https://github.com/')
-        assert url.user is None
+        assert url.username is None
         assert url.password is None

@@ -25,7 +25,7 @@ easier to manipulate URLs. All the basic slots from urlsplit are there:
     u'github.com'
     >>> url.hostname
     u'github.com'
-    >>> (url.user, url.password)
+    >>> (url.username, url.password)
     (None, None)
     >>> print url.port
     None
