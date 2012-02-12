@@ -70,3 +70,37 @@ class URLObjectPropertyTest(unittest.TestCase):
         url = URLObject(u'https://github.com/')
         assert url.username is None
         assert url.password is None
+
+
+class URLObjectModificationTest(unittest.TestCase):
+
+    def setUp(self):
+        self.url = URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#foo')
+
+    def test_with_scheme_replaces_scheme(self):
+        assert (self.url.with_scheme('http') ==
+                u'http://github.com/zacharyvoase/urlobject?spam=eggs#foo')
+
+    def test_with_netloc_replaces_netloc(self):
+        assert (self.url.with_netloc('example.com') ==
+                u'https://example.com/zacharyvoase/urlobject?spam=eggs#foo')
+
+    def test_with_path_replaces_path(self):
+        assert (self.url.with_path('/dvxhouse/intessa') ==
+                u'https://github.com/dvxhouse/intessa?spam=eggs#foo')
+
+    def test_with_query_replaces_query(self):
+        assert (self.url.with_query('spam-ham-eggs') ==
+                u'https://github.com/zacharyvoase/urlobject?spam-ham-eggs#foo')
+
+    def test_without_query_removes_query(self):
+        assert (self.url.without_query() ==
+                u'https://github.com/zacharyvoase/urlobject#foo')
+
+    def test_with_fragment_replaces_fragment(self):
+        assert (self.url.with_fragment('part') ==
+                u'https://github.com/zacharyvoase/urlobject?spam=eggs#part')
+
+    def test_without_fragment_removes_fragment(self):
+        assert (self.url.without_fragment() ==
+                u'https://github.com/zacharyvoase/urlobject?spam=eggs')
