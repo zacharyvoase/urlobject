@@ -110,10 +110,37 @@ class URLObjectModificationTest(unittest.TestCase):
         url = URLObject(u'https://zack:1234@github.com/')
         assert url.without_password() == u'https://zack@github.com/'
 
-    # TODO: add tests for a `with_auth()` method which adds/replaces both
-    # username and password in one call.
-    # TODO: add tests for a `without_auth()` method which removes both username
-    # and password in one call.
+    def test_with_auth_with_one_arg_adds_username(self):
+        url = URLObject(u'https://github.com/')
+        assert url.with_auth('zack') == u'https://zack@github.com/'
+
+    def test_with_auth_with_one_arg_replaces_whole_auth_string_with_username(self):
+        url = URLObject(u'https://alice:1234@github.com/')
+        assert url.with_auth('zack') == u'https://zack@github.com/'
+
+    def test_with_auth_with_two_args_adds_username_and_password(self):
+        url = URLObject(u'https://github.com/')
+        assert url.with_auth('zack', '1234') == u'https://zack:1234@github.com/'
+
+    def test_with_auth_with_two_args_replaces_whole_auth_string_with_username_and_password(self):
+        # Replaces username-only auth string
+        url = URLObject(u'https://alice@github.com/')
+        assert url.with_auth('zack', '1234') == u'https://zack:1234@github.com/'
+
+        # Replaces username and password.
+        url = URLObject(u'https://alice:4567@github.com/')
+        assert url.with_auth('zack', '1234') == u'https://zack:1234@github.com/'
+
+    def test_without_auth_removes_entire_auth_string(self):
+        # No username or password => no-op.
+        url = URLObject(u'https://github.com/')
+        assert url.without_auth() == u'https://github.com/'
+        # Username-only.
+        url = URLObject(u'https://alice@github.com/')
+        assert url.without_auth() == u'https://github.com/'
+        # Username and password.
+        url = URLObject(u'https://alice:1234@github.com/')
+        assert url.without_auth() == u'https://github.com/'
 
     def test_with_port_adds_port_number(self):
         assert (self.url.with_port(24) ==
