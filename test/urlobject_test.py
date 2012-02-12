@@ -1,5 +1,7 @@
 import unittest
 
+from nose.tools import assert_raises
+
 from urlobject import URLObject
 
 
@@ -98,9 +100,12 @@ class URLObjectModificationTest(unittest.TestCase):
         assert url.without_username() == u'https://github.com/'
 
     def test_with_password_adds_password(self):
-        # TODO: define behavior when the URL has no username.
         url = URLObject(u'https://zack@github.com/')
         assert url.with_password('1234') == u'https://zack:1234@github.com/'
+
+    def test_with_password_raises_ValueError_when_there_is_no_username(self):
+        url = URLObject(u'https://github.com/')
+        assert_raises(ValueError, lambda: url.with_password('1234'))
 
     def test_with_password_replaces_password(self):
         url = URLObject(u'https://zack:1234@github.com/')
