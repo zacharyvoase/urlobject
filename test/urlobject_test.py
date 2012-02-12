@@ -85,6 +85,48 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (self.url.with_netloc('example.com') ==
                 u'https://example.com/zacharyvoase/urlobject?spam=eggs#foo')
 
+    def test_with_username_adds_username(self):
+        url = URLObject(u'https://github.com/')
+        assert url.with_username('zack') == u'https://zack@github.com/'
+
+    def test_with_username_replaces_username(self):
+        url = URLObject(u'https://zack@github.com/')
+        assert url.with_username('alice') == u'https://alice@github.com/'
+
+    def test_without_username_removes_username(self):
+        url = URLObject(u'https://zack@github.com/')
+        assert url.without_username() == u'https://github.com/'
+
+    def test_with_password_adds_password(self):
+        # TODO: define behavior when the URL has no username.
+        url = URLObject(u'https://zack@github.com/')
+        assert url.with_password('1234') == u'https://zack:1234@github.com/'
+
+    def test_with_password_replaces_password(self):
+        url = URLObject(u'https://zack:1234@github.com/')
+        assert url.with_password('5678') == u'https://zack:5678@github.com/'
+
+    def test_without_password_removes_password(self):
+        url = URLObject(u'https://zack:1234@github.com/')
+        assert url.without_password() == u'https://zack@github.com/'
+
+    # TODO: add tests for a `with_auth()` method which adds/replaces both
+    # username and password in one call.
+    # TODO: add tests for a `without_auth()` method which removes both username
+    # and password in one call.
+
+    def test_with_port_adds_port_number(self):
+        assert (self.url.with_port(24) ==
+                u'https://github.com:24/zacharyvoase/urlobject?spam=eggs#foo')
+
+    def test_with_port_replaces_port_number(self):
+        url = URLObject(u'https://github.com:59/')
+        assert url.with_port(67) == u'https://github.com:67/'
+
+    def test_without_port_removes_port_number(self):
+        url = URLObject(u'https://github.com:59/')
+        assert url.without_port() == u'https://github.com/'
+
     def test_with_path_replaces_path(self):
         assert (self.url.with_path('/dvxhouse/intessa') ==
                 u'https://github.com/dvxhouse/intessa?spam=eggs#foo')
