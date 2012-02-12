@@ -6,6 +6,16 @@ from ports import DEFAULT_PORTS
 
 class URLObject(unicode):
 
+    """
+    A URL.
+
+    This class contains properties and methods for accessing and modifying the
+    constituent components of a URL. :class:`URLObject` instances are
+    immutable, as they derive from the built-in ``unicode``, and therefore all
+    methods return *new* objects; you need to consider this when using
+    :class:`URLObject` in your own code.
+    """
+
     @property
     def scheme(self):
         return urlparse.urlsplit(self).scheme
