@@ -1,3 +1,5 @@
+import unittest
+
 from nose.tools import assert_raises
 
 from urlobject.netloc import Netloc
@@ -11,7 +13,7 @@ class NetlocTest(unittest.TestCase):
 
     def test_preserves_hash_of_the_original_string(self):
         netloc = u'zack:1234@github.com:443'
-        assert hash(Netloc(netloc)) == netloc
+        assert hash(Netloc(netloc)) == hash(netloc)
 
     def test_username(self):
         assert Netloc(u'github.com').username is None
