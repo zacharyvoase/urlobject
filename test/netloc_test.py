@@ -33,7 +33,7 @@ class NetlocTest(unittest.TestCase):
         assert Netloc(u'github.com').without_username() == u'github.com'
         assert Netloc(u'zack@github.com').without_username() == u'github.com'
         # Removing the username will also remove the password.
-        assert Netloc(u'zack:1234@github.com').without_username() == u'github.com:443'
+        assert Netloc(u'zack:1234@github.com:443').without_username() == u'github.com:443'
 
     def test_password(self):
         assert Netloc(u'github.com').password is None
