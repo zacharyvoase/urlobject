@@ -52,6 +52,43 @@ class NetlocTest(unittest.TestCase):
         assert_raises(ValueError,
                       lambda: Netloc('github.com').with_password('1234'))
 
+    def test_with_auth_with_one_arg_adds_username(self):
+        assert (Netloc(u'github.com').with_auth('zack') ==
+                u'https://zack@github.com/')
+
+    def test_auth(self):
+        assert Netloc(u'github.com').auth == (None, None)
+        assert Netloc(u'zack@github.com').auth == (u'zack', None)
+        assert Netloc(u'zack:1234@github.com').auth == (u'zack', u'1234')
+
+    def test_with_auth_with_one_arg_replaces_whole_auth_string_with_username(self):
+        assert (Netloc(u'alice:1234@github.com').with_auth('zack') ==
+                u'zack@github.com')
+
+    def test_with_auth_with_two_args_adds_username_and_password(self):
+        assert (Netloc(u'github.com').with_auth('zack', '1234') ==
+                u'zack:1234@github.com')
+
+    def test_with_auth_with_two_args_replaces_whole_auth_string_with_username_and_password(self):
+        # Replaces username-only auth string
+        assert (Netloc(u'alice@github.com').with_auth('zack', '1234') ==
+                u'https://zack:1234@github.com/')
+
+        # Replaces username and password.
+        assert (Netloc(u'https://alice:4567@github.com/').with_auth('zack', '1234') ==
+                u'https://zack:1234@github.com/')
+
+    def test_without_auth_removes_entire_auth_string(self):
+        # No username or password => no-op.
+        netloc = Netloc(u'github.com')
+        assert netloc.without_auth() == u'github.com'
+        # Username-only.
+        netloc = Netloc(u'alice@github.com')
+        assert netloc.without_auth() == u'github.com'
+        # Username and password.
+        netloc = Netloc(u'alice:1234@github.com')
+        assert netloc.without_auth() == u'github.com'
+
     def test_hostname(self):
         assert Netloc(u'zack:1234@github.com:443').hostname == u'github.com'
 
