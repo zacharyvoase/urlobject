@@ -4,7 +4,7 @@ import urlparse
 class Netloc(unicode):
 
     """
-    Represent a netloc string (``username:password@hostname:port``).
+    A netloc string (``username:password@hostname:port``).
 
     Contains methods for accessing and (non-destructively) modifying those four
     components of the netloc. All methods return new instances.
