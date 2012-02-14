@@ -10,6 +10,9 @@ class Netloc(unicode):
     components of the netloc. All methods return new instances.
     """
 
+    def __repr__(self):
+        return 'Netloc(%r)' % (unicode(self),)
+
     @classmethod
     def __unsplit(cls, username, password, hostname, port):
         """Put together a :class:`Netloc` from its constituent parts."""

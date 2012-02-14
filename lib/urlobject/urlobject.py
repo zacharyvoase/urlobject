@@ -17,6 +17,9 @@ class URLObject(unicode):
     :class:`URLObject` in your own code.
     """
 
+    def __repr__(self):
+        return 'URLObject(%r)' % (unicode(self),)
+
     @property
     def scheme(self):
         return urlparse.urlsplit(self).scheme

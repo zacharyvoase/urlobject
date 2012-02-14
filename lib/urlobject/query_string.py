@@ -6,6 +6,9 @@ import urlparse
 
 class QueryString(unicode):
 
+    def __repr__(self):
+        return 'QueryString(%r)' % (unicode(self),)
+
     @property
     def list(self):
         result = []
