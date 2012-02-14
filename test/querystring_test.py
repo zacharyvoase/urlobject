@@ -66,3 +66,52 @@ class QueryStringTest(unittest.TestCase):
     def test_multi_dict_returns_a_dictionary_with_all_values_per_key(self):
         assert QueryString(u'abc=123&abc=456').multi_dict == {
             u'abc': [u'123', u'456']}
+
+    def test_add_param_encodes_and_adds_the_given_parameter_to_the_QueryString(self):
+        s = QueryString(u'')
+        assert s.add_param(u'abc', u'123') == u'abc=123'
+        assert (s.add_param(u'abc', u'123')
+                 .add_param(u'def', u'456') == u'abc=123&def=456')
+
+    def test_add_param_can_add_valueless_parameters(self):
+        s = QueryString(u'abc=123')
+        assert s.add_param(u'def', None) == u'abc=123&def'
+
+    def test_add_param_can_add_empty_valued_parameters(self):
+        s = QueryString(u'abc=123')
+        assert s.add_param(u'def', u'') == u'abc=123&def='
+
+    def test_add_param_can_add_anonymous_parameters(self):
+        s = QueryString(u'abc=123')
+        assert s.add_param(u'', u'456') == u'abc=123&=456'
+
+    def test_add_param_encodes_utf8(self):
+        s = QueryString(u'abc=123')
+        assert s.add_param(u'foo', u'\ufffd') == u'abc=123&foo=%EF%BF%BD'
+
+    def test_add_param_allows_the_same_parameter_name_to_be_added_twice(self):
+        s = QueryString(u'abc=123')
+        assert s.add_param(u'abc', u'456') == u'abc=123&abc=456'
+
+    def test_add_param_encodes_special_characters(self):
+        s = QueryString(u'abc=123')
+        assert s.add_param(u'd e f', u'4+5#6') == u'abc=123&d%20e%20f=4%2B5%236'
+
+    def test_set_param_replaces_existing_parameter_names(self):
+        s = QueryString(u'abc=123&abc=456')
+        assert s.set_param(u'abc', '789') == u'abc=789'
+
+    def test_del_param_removes_all_instances_of_the_parameter_from_the_QueryString(self):
+        s = QueryString(u'abc=123&def=456&abc=789')
+        assert s.del_param(u'abc') == u'def=456'
+        assert s.del_param(u'def') == u'abc=123&abc=789'
+
+    def test_del_param_can_remove_valueless_parameters(self):
+        valueless = QueryString(u'abc=123&def&abc=456')
+        empty_valued = QueryString(u'abc=123&def=&abc=456')
+        assert valueless.del_param(u'def') == u'abc=123&abc=456'
+        assert empty_valued.del_param(u'def') == u'abc=123&abc=456'
+
+    def test_del_param_can_remove_anonymous_parameters(self):
+        s = QueryString(u'abc=123&=456&def=789')
+        assert s.del_param(u'') == u'abc=123&def=789'
