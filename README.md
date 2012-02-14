@@ -16,13 +16,13 @@ easier to manipulate URLs. All the basic slots from urlsplit are there:
 
     >>> url = URLObject("https://github.com/zacharyvoase/urlobject?spam=eggs#foo")
     >>> url
-    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#foo')
     >>> unicode(url)
     u'https://github.com/zacharyvoase/urlobject?spam=eggs#foo'
     >>> url.scheme
     u'https'
     >>> url.netloc
-    u'github.com'
+    Netloc(u'github.com')
     >>> url.hostname
     u'github.com'
     >>> (url.username, url.password)
@@ -30,7 +30,7 @@ easier to manipulate URLs. All the basic slots from urlsplit are there:
     >>> print url.port
     None
     >>> url.default_port
-    80
+    443
     >>> url.path
     URLPath(u'/zacharyvoase/urlobject')
     >>> url.query
@@ -43,24 +43,24 @@ that, because `unicode` (and therefore `URLObject`) is immutable, these methods
 all return new URLs:
 
     >>> url.with_scheme('http')
-    URLObject('http://github.com/zacharyvoase/urlobject?spam=eggs#foo')
+    URLObject(u'http://github.com/zacharyvoase/urlobject?spam=eggs#foo')
     >>> url.with_netloc('example.com')
-    URLObject('https://example.com/zacharyvoase/urlobject?spam=eggs#foo')
+    URLObject(u'https://example.com/zacharyvoase/urlobject?spam=eggs#foo')
     >>> url.with_auth('alice', '1234')
-    URLObject('https://alice:1234@github.com/zacharyvoase/urlobject?spam=eggs#foo')
+    URLObject(u'https://alice:1234@github.com/zacharyvoase/urlobject?spam=eggs#foo')
     >>> url.with_path('/some_page')
-    URLObject('https://github.com/some_page?spam=eggs#foo')
+    URLObject(u'https://github.com/some_page?spam=eggs#foo')
     >>> url.with_query('funtimes=yay')
-    URLObject('https://github.com/zacharyvoase/urlobject?funtimes=yay#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?funtimes=yay#foo')
     >>> url.with_fragment('example')
-    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs#example')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#example')
 
 For the query and fragment, `without_` methods also exist:
 
     >>> url.without_query()
-    URLObject('https://github.com/zacharyvoase/urlobject#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject#foo')
     >>> url.without_fragment()
-    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs')
 
 
 ### Path
@@ -82,11 +82,11 @@ properties for manipulating the path string:
 Some of these are aliased on the URL itself:
 
     >>> url.parent
-    URLObject('https://github.com/zacharyvoase?spam=eggs#foo')
+    URLObject(u'https://github.com/zacharyvoase?spam=eggs#foo')
     >>> url.add_path_segment('subnode')
-    URLObject('https://github.com/zacharyvoase/urlobject/subnode?spam=eggs#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject/subnode?spam=eggs#foo')
     >>> url.root
-    URLObject('https://github.com/?spam=eggs#foo')
+    URLObject(u'https://github.com/?spam=eggs#foo')
 
 
 ### Query string
@@ -114,9 +114,9 @@ return a *new* `QueryString` instance:
     >>> url.query.set_param(u'spam', u'ham')
     QueryString(u'spam=ham')
     >>> url.query.add_params({u'spam': u'ham', u'foo': u'bar'})
-    QueryString(u'spam=eggs&spam=ham&foo=bar')
+    QueryString(u'spam=eggs&foo=bar&spam=ham')
     >>> url.query.set_params({u'spam': u'ham', u'foo': u'bar'})
-    QueryString(u'spam=ham&foo=bar')
+    QueryString(u'foo=bar&spam=ham')
 
 Delete parameters with `del_param()` and `del_params()`. These will remove all
 appearances of the requested parameter name from the `QueryString`:
@@ -129,11 +129,11 @@ appearances of the requested parameter name from the `QueryString`:
 Again, some of these methods are aliased on the `URLObject` directly:
 
     >>> url.add_query_param(u'spam', u'ham')
-    URLObject('https://github.com/zacharyvoase/urlobject?spam=eggs&spam=ham#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs&spam=ham#foo')
     >>> url.set_query_param(u'spam', u'ham')
-    URLObject('https://github.com/zacharyvoase/urlobject?spam=ham#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?spam=ham#foo')
     >>> url.del_query_param(u'spam')
-    URLObject('https://github.com/zacharyvoase/urlobject#foo')
+    URLObject(u'https://github.com/zacharyvoase/urlobject#foo')
 
 
 ## (Un)license
