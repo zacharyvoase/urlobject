@@ -171,6 +171,31 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (self.url.without_query() ==
                 u'https://github.com/zacharyvoase/urlobject#foo')
 
+    def test_add_query_param_adds_one_query_parameter(self):
+        assert (self.url.add_query_param(u'spam', u'ham') ==
+                u'https://github.com/zacharyvoase/urlobject?spam=eggs&spam=ham#foo')
+
+    def test_add_query_params_adds_multiple_query_parameters(self):
+        assert (self.url.add_query_params([(u'spam', u'ham'), (u'foo', u'bar')]) ==
+                u'https://github.com/zacharyvoase/urlobject?spam=eggs&spam=ham&foo=bar#foo')
+
+    def test_set_query_param_adds_or_replaces_one_query_parameter(self):
+        assert (self.url.set_query_param(u'spam', u'ham') ==
+                u'https://github.com/zacharyvoase/urlobject?spam=ham#foo')
+
+    def test_set_query_params_adds_or_replaces_multiple_query_parameters(self):
+        assert (self.url.set_query_params({u'foo': u'bar'}, spam=u'ham') ==
+                u'https://github.com/zacharyvoase/urlobject?foo=bar&spam=ham#foo')
+
+    def test_del_query_param_removes_one_query_parameter(self):
+        assert (self.url.del_query_param(u'spam') ==
+                u'https://github.com/zacharyvoase/urlobject#foo')
+
+    def test_del_query_params_removes_multiple_query_parameters(self):
+        url = URLObject(u'https://github.com/zacharyvoase/urlobject?foo=bar&baz=spam#foo')
+        assert (url.del_query_params(['foo', 'baz']) ==
+                u'https://github.com/zacharyvoase/urlobject#foo')
+
     def test_with_fragment_replaces_fragment(self):
         assert (self.url.with_fragment('part') ==
                 u'https://github.com/zacharyvoase/urlobject?spam=eggs#part')
