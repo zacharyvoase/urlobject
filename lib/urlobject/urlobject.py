@@ -2,6 +2,7 @@ import urlparse
 
 from netloc import Netloc
 from ports import DEFAULT_PORTS
+from query_string import QueryString
 
 
 class URLObject(unicode):
@@ -104,7 +105,7 @@ class URLObject(unicode):
 
     @property
     def query(self):
-        return urlparse.urlsplit(self).query
+        return QueryString(urlparse.urlsplit(self).query)
 
     def with_query(self, query):
         return self.__replace(query=query)
