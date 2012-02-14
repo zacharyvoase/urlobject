@@ -50,3 +50,10 @@ class QueryStringTest(unittest.TestCase):
         assert QueryString(u'=123').list == [(u'', u'123')]
         assert QueryString(u'abc=123&=456&ghi=789').list == [
             (u'abc', u'123'), (u'', u'456'), (u'ghi', u'789')]
+
+    def test_dict_returns_a_dictionary_with_one_value_per_key(self):
+        assert QueryString(u'abc=123&abc=456').dict == {u'abc': u'456'}
+
+    def test_multi_dict_returns_a_dictionary_with_all_values_per_key(self):
+        assert QueryString(u'abc=123&abc=456').multi_dict == {
+            u'abc': [u'123', u'456']}
