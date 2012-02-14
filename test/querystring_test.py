@@ -115,3 +115,41 @@ class QueryStringTest(unittest.TestCase):
     def test_del_param_can_remove_anonymous_parameters(self):
         s = QueryString(u'abc=123&=456&def=789')
         assert s.del_param(u'') == u'abc=123&def=789'
+
+    def test_add_params_is_equivalent_to_calling_add_param_multiple_times(self):
+        s = QueryString(u'')
+        assert (s.add_params([(u'abc', u'123'), (u'def', u'456')]) ==
+                s.add_param(u'abc', u'123').add_param(u'def', u'456'))
+
+    def test_add_params_accepts_the_same_args_as_dict(self):
+        s = QueryString(u'')
+        added = s.add_params({u'abc': u'123'}, foo=u'bar', xyz='456')
+        assert added.dict == {u'abc': u'123', u'foo': u'bar', u'xyz': u'456'}
+        added2 = s.add_params([(u'abc', u'123')], foo=u'bar', xyz='456')
+        assert added2.dict == {u'abc': u'123', u'foo': u'bar', u'xyz': u'456'}
+
+    def test_add_params_accepts_the_same_parameter_name_multiple_times(self):
+        s = (QueryString(u'')
+             .add_params([(u'abc', u'123'), (u'abc', u'456')]))
+        assert s.list == [(u'abc', u'123'), (u'abc', u'456')]
+
+    def test_set_params_is_equivalent_to_calling_set_param_multiple_times(self):
+        s = QueryString(u'')
+        assert (s.set_params([(u'abc', u'123'), (u'def', u'456')]) ==
+                s.set_param(u'abc', u'123').set_param(u'def', u'456'))
+
+    def test_set_params_accepts_the_same_args_as_dict(self):
+        s = QueryString(u'')
+        added = s.set_params({u'abc': u'123'}, abc='456')
+        assert added.dict == {u'abc': u'456'}
+        added2 = s.set_params([(u'abc', u'123')], abc=u'456')
+        assert added2.dict == {u'abc': u'456'}
+
+    def test_set_params_accepts_the_same_parameter_name_multiple_times(self):
+        s = (QueryString(u'')
+             .set_params([(u'abc', u'123'), (u'abc', u'456')]))
+        assert s.list == [(u'abc', u'456')]
+
+    def test_del_params_accepts_an_iterable_and_removes_all_listed_parameters(self):
+        s = QueryString(u'abc=123&def=456&xyz=789')
+        assert s.del_params((u'abc', u'xyz')) == u'def=456'
