@@ -23,64 +23,52 @@ class URLObject(unicode):
     @property
     def scheme(self):
         return urlparse.urlsplit(self).scheme
-
     def with_scheme(self, scheme):
         return self.__replace(scheme=scheme)
 
     @property
     def netloc(self):
         return Netloc(urlparse.urlsplit(self).netloc)
-
     def with_netloc(self, netloc):
         return self.__replace(netloc=netloc)
 
     @property
     def username(self):
         return self.netloc.username
-
     def with_username(self, username):
         return self.with_netloc(self.netloc.with_username(username))
-
     def without_username(self):
         return self.with_netloc(self.netloc.without_username())
 
     @property
     def password(self):
         return self.netloc.password
-
     def with_password(self, password):
         return self.with_netloc(self.netloc.with_password(password))
-
     def without_password(self):
         return self.with_netloc(self.netloc.without_password())
 
     @property
     def hostname(self):
         return self.netloc.hostname
-
     def with_hostname(self, hostname):
         return self.with_netloc(self.netloc.with_hostname(hostname))
-
     def without_hostname(self):
         return self.with_netloc(self.netloc.without_hostname())
 
     @property
     def port(self):
         return self.netloc.port
-
     def with_port(self, port):
         return self.with_netloc(self.netloc.with_port(port))
-
     def without_port(self):
         return self.with_netloc(self.netloc.without_port())
 
     @property
     def auth(self):
         return self.netloc.auth
-
     def with_auth(self, *auth):
         return self.with_netloc(self.netloc.with_auth(*auth))
-
     def without_auth(self):
         return self.with_netloc(self.netloc.without_auth())
 
@@ -102,27 +90,22 @@ class URLObject(unicode):
     @property
     def path(self):
         return urlparse.urlsplit(self).path
-
     def with_path(self, path):
         return self.__replace(path=path)
 
     @property
     def query(self):
         return QueryString(urlparse.urlsplit(self).query)
-
     def with_query(self, query):
         return self.__replace(query=query)
-
     def without_query(self):
         return self.__replace(query='')
 
     @property
     def fragment(self):
         return urlparse.urlsplit(self).fragment
-
     def with_fragment(self, fragment):
         return self.__replace(fragment=fragment)
-
     def without_fragment(self):
         return self.__replace(fragment='')
 
