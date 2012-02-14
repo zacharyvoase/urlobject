@@ -101,6 +101,18 @@ class URLObject(unicode):
     def without_query(self):
         return self.__replace(query='')
 
+    @property
+    def query_list(self):
+        return self.query.list
+
+    @property
+    def query_dict(self):
+        return self.query.dict
+
+    @property
+    def query_multi_dict(self):
+        return self.query.multi_dict
+
     def add_query_param(self, name, value):
         return self.with_query(self.query.add_param(name, value))
     def add_query_params(self, *args, **kwargs):
