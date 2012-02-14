@@ -52,6 +52,13 @@ class QueryString(unicode):
             return type(self)(self + '&' + parameter)
         return type(self)(parameter)
 
+    def add_params(self, *args, **kwargs):
+        params_list = get_params_list(*args, **kwargs)
+        new = self
+        for name, value in params_list:
+            new = new.add_param(name, value)
+        return new
+
     def del_param(self, name):
         params = [(n, v) for n, v in self.list if n != name]
         qs = type(self)('')
@@ -62,5 +69,38 @@ class QueryString(unicode):
     def set_param(self, name, value):
         return self.del_param(name).add_param(name, value)
 
+    def set_params(self, *args, **kwargs):
+        params_list = get_params_list(*args, **kwargs)
+        new = self
+        for name, value in params_list:
+            new = new.set_param(name, value)
+        return new
+
+    def del_params(self, params):
+        deleted = set(params)
+        params = [(name, value) for name, value in self.list
+                  if name not in deleted]
+        qs = type(self)('')
+        for param in params:
+            qs = qs.add_param(*param)
+        return qs
+
+
 qs_encode = lambda s: urllib.quote(s.encode('utf-8'))
 qs_decode = lambda s: urlparse.unquote(str(s).replace('+', ' ')).decode('utf-8')
+
+
+def get_params_list(*args, **kwargs):
+    """Turn dict-like arguments into an ordered list of pairs."""
+    params = []
+    if args:
+        if len(args) > 1:
+            raise TypeError("Expected at most 1 arguments, got 2")
+        arg = args[0]
+        if hasattr(arg, 'items'):
+            params.extend(arg.items())
+        else:
+            params.extend(list(arg))
+    if kwargs:
+        params.extend(kwargs.items())
+    return params
