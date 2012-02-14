@@ -1,5 +1,6 @@
 import collections
 import re
+import urllib
 import urlparse
 
 
@@ -24,11 +25,9 @@ class QueryString(unicode):
             else:
                 name, value = name_value
 
-            decode = (lambda s: urlparse.unquote(str(s).replace('+', ' '))
-                      .decode('utf-8'))
-            name = decode(name)
+            name = qs_decode(name)
             if value is not None:
-                value = decode(value)
+                value = qs_decode(value)
 
             result.append((name, value))
         return result
@@ -43,3 +42,25 @@ class QueryString(unicode):
         for name, value in self.list:
             result[name].append(value)
         return dict(result)
+
+    def add_param(self, name, value):
+        if value is None:
+            parameter = qs_encode(name)
+        else:
+            parameter = qs_encode(name) + '=' + qs_encode(value)
+        if self:
+            return type(self)(self + '&' + parameter)
+        return type(self)(parameter)
+
+    def del_param(self, name):
+        params = [(n, v) for n, v in self.list if n != name]
+        qs = type(self)('')
+        for param in params:
+            qs = qs.add_param(*param)
+        return qs
+
+    def set_param(self, name, value):
+        return self.del_param(name).add_param(name, value)
+
+qs_encode = lambda s: urllib.quote(s.encode('utf-8'))
+qs_decode = lambda s: urlparse.unquote(str(s).replace('+', ' ')).decode('utf-8')
