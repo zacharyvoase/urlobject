@@ -63,8 +63,8 @@ class URLObjectPropertyTest(unittest.TestCase):
 
     def test_query_multi_dict_returns_a_multi_dict_of_query_params(self):
         url = URLObject(u'https://example.com/?spam=eggs&spam=ham&foo=bar')
-        assert self.url.query_multi_dict == {u'spam': [u'eggs', u'ham'],
-                                             u'foo': [u'bar']}
+        assert url.query_multi_dict == {u'spam': [u'eggs', u'ham'],
+                                        u'foo': [u'bar']}
 
     def test_fragment_returns_fragment(self):
         assert self.url.fragment == u'foo'
