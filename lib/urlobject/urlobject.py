@@ -101,6 +101,21 @@ class URLObject(unicode):
     def without_query(self):
         return self.__replace(query='')
 
+    def add_query_param(self, name, value):
+        return self.with_query(self.query.add_param(name, value))
+    def add_query_params(self, *args, **kwargs):
+        return self.with_query(self.query.add_params(*args, **kwargs))
+
+    def set_query_param(self, name, value):
+        return self.with_query(self.query.set_param(name, value))
+    def set_query_params(self, *args, **kwargs):
+        return self.with_query(self.query.set_params(*args, **kwargs))
+
+    def del_query_param(self, name):
+        return self.with_query(self.query.del_param(name))
+    def del_query_params(self, params):
+        return self.with_query(self.query.del_params(params))
+
     @property
     def fragment(self):
         return urlparse.urlsplit(self).fragment
