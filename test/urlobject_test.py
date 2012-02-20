@@ -23,6 +23,43 @@ class URLObjectTest(unittest.TestCase):
         assert unicode(url) == self.url_string
 
 
+class URLObjectRelativeTest(unittest.TestCase):
+
+    def setUp(self):
+        self.url = URLObject(u"https://github.com/zacharyvoase/urlobject?spam=eggs#foo")
+
+    def test_relative_with_scheme_returns_the_given_URL(self):
+        assert self.url.relative(u'http://example.com/abc') == u'http://example.com/abc'
+
+    def test_relative_with_netloc_returns_the_given_URL_but_preserves_scheme(self):
+        assert self.url.relative(u'//example.com/abc') == u'https://example.com/abc'
+
+    def test_relative_with_path_replaces_path_and_removes_query_string_and_fragment(self):
+        assert self.url.relative(u'another-project') == u'https://github.com/zacharyvoase/another-project'
+        assert self.url.relative(u'.') == u'https://github.com/zacharyvoase/'
+        assert self.url.relative(u'/dvxhouse/intessa') == u'https://github.com/dvxhouse/intessa'
+        assert self.url.relative(u'/dvxhouse/intessa') == u'https://github.com/dvxhouse/intessa'
+
+    def test_relative_with_empty_string_removes_fragment_but_preserves_query(self):
+        # The empty string is treated as a path meaning 'the current location'.
+        assert self.url.relative('') == self.url.without_fragment()
+
+    def test_relative_with_query_string_removes_fragment(self):
+        assert self.url.relative('?name=value') == self.url.without_fragment().with_query('name=value')
+
+    def test_relative_with_fragment_removes_nothing(self):
+        assert self.url.relative('#foobar') == self.url.with_fragment('foobar')
+
+    def test_compound_relative_urls(self):
+        assert self.url.relative('//example.com/a/b') == u'https://example.com/a/b'
+        assert self.url.relative('//example.com/a/b#bar') == u'https://example.com/a/b#bar'
+        assert self.url.relative('//example.com/a/b?c=d#bar') == u'https://example.com/a/b?c=d#bar'
+        assert self.url.relative('/a/b?c=d#bar') == u'https://github.com/a/b?c=d#bar'
+        assert self.url.relative('?c=d#bar') == u'https://github.com/zacharyvoase/urlobject?c=d#bar'
+        assert self.url.relative('#bar') == u'https://github.com/zacharyvoase/urlobject?spam=eggs#bar'
+
+
+
 class URLObjectPropertyTest(unittest.TestCase):
 
     def setUp(self):
