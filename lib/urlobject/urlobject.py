@@ -1,6 +1,7 @@
 import urlparse
 
 from netloc import Netloc
+from path import URLPath
 from ports import DEFAULT_PORTS
 from query_string import QueryString
 
@@ -89,7 +90,7 @@ class URLObject(unicode):
 
     @property
     def path(self):
-        return urlparse.urlsplit(self).path
+        return URLPath(urlparse.urlsplit(self).path)
     def with_path(self, path):
         return self.__replace(path=path)
 
