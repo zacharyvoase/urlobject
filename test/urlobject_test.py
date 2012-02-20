@@ -174,6 +174,32 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (self.url.with_path('/dvxhouse/intessa') ==
                 u'https://github.com/dvxhouse/intessa?spam=eggs#foo')
 
+    def test_root_goes_to_root_path(self):
+        assert self.url.root == u'https://github.com/?spam=eggs#foo'
+
+    def test_parent_jumps_up_one_level(self):
+        url = URLObject(u'https://github.com/zacharyvoase/urlobject')
+        assert url.parent == u'https://github.com/zacharyvoase/'
+        assert url.parent.parent == u'https://github.com/'
+
+    def test_add_path_segment_adds_a_path_segment(self):
+        url = URLObject(u'https://github.com/zacharyvoase/urlobject')
+        assert (url.add_path_segment('tree') ==
+                u'https://github.com/zacharyvoase/urlobject/tree')
+        assert (url.add_path_segment('tree/master') ==
+                u'https://github.com/zacharyvoase/urlobject/tree%2Fmaster')
+
+    def test_add_path_adds_a_partial_path(self):
+        url = URLObject(u'https://github.com/zacharyvoase/urlobject')
+        assert (url.add_path('tree') ==
+                u'https://github.com/zacharyvoase/urlobject/tree')
+        assert (url.add_path('tree/master') ==
+                u'https://github.com/zacharyvoase/urlobject/tree/master')
+
+    def test_is_leaf(self):
+        assert URLObject(u'https://github.com/zacharyvoase/urlobject').is_leaf
+        assert not URLObject(u'https://github.com/zacharyvoase/').is_leaf
+
     def test_with_query_replaces_query(self):
         assert (self.url.with_query('spam-ham-eggs') ==
                 u'https://github.com/zacharyvoase/urlobject?spam-ham-eggs#foo')
