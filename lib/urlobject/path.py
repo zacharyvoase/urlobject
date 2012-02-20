@@ -7,6 +7,8 @@ import urlparse
 
 class Root(object):
 
+    """A descriptor which always returns the root path."""
+
     def __get__(self, instance, cls):
         return cls('/')
 
