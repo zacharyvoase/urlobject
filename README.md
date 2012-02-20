@@ -63,6 +63,34 @@ For the query and fragment, `without_` methods also exist:
     URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs')
 
 
+### Relative URL Resolution
+
+You can resolve relative URLs against a URLObject using `relative()`:
+
+    >>> url.relative('another-project')
+    URLObject(u'https://github.com/zacharyvoase/another-project')
+    >>> url.relative('?different-query-string')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?different-query-string')
+    >>> url.relative('#frag')
+    URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#frag')
+
+Absolute URLs will just be returned as-is:
+
+    >>> url.relative('http://example.com/foo')
+    URLObject(u'http://example.com/foo')
+
+And you can specify as much or as little of the new URL as you like:
+
+    >>> url.relative('//example.com/foo') # Preserve scheme
+    URLObject(u'https://example.com/foo')
+    >>> url.relative('/dvxhouse/intessa') # Just change path
+    URLObject(u'https://github.com/dvxhouse/intessa')
+    >>> url.relative('/dvxhouse/intessa?foo=bar') # Change path and query
+    URLObject(u'https://github.com/dvxhouse/intessa?foo=bar')
+    >>> url.relative('/dvxhouse/intessa?foo=bar#baz') # Change path, query and fragment
+    URLObject(u'https://github.com/dvxhouse/intessa?foo=bar#baz')
+
+
 ### Path
 
 The `path` property is an instance of `URLPath`, which has several methods and
