@@ -71,9 +71,9 @@ properties for manipulating the path string:
     >>> url.path
     URLPath(u'/zacharyvoase/urlobject')
     >>> url.path.parent
-    URLPath(u'/zacharyvoase')
+    URLPath(u'/zacharyvoase/')
     >>> url.path.segments
-    ('zacharyvoase', 'urlobject')
+    (u'zacharyvoase', u'urlobject')
     >>> url.path.add_segment('subnode')
     URLPath(u'/zacharyvoase/urlobject/subnode')
     >>> url.path.root
@@ -82,9 +82,11 @@ properties for manipulating the path string:
 Some of these are aliased on the URL itself:
 
     >>> url.parent
-    URLObject(u'https://github.com/zacharyvoase?spam=eggs#foo')
+    URLObject(u'https://github.com/zacharyvoase/?spam=eggs#foo')
     >>> url.add_path_segment('subnode')
     URLObject(u'https://github.com/zacharyvoase/urlobject/subnode?spam=eggs#foo')
+    >>> url.add_path('tree/urlobject2')
+    URLObject(u'https://github.com/zacharyvoase/urlobject/tree/urlobject2?spam=eggs#foo')
     >>> url.root
     URLObject(u'https://github.com/?spam=eggs#foo')
 
