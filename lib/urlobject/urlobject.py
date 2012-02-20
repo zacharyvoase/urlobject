@@ -95,6 +95,24 @@ class URLObject(unicode):
         return self.__replace(path=path)
 
     @property
+    def root(self):
+        return self.with_path('/')
+
+    @property
+    def parent(self):
+        return self.with_path(self.path.parent)
+
+    @property
+    def is_leaf(self):
+        return self.path.is_leaf
+
+    def add_path_segment(self, segment):
+        return self.with_path(self.path.add_segment(segment))
+
+    def add_path(self, partial_path):
+        return self.with_path(self.path.add(partial_path))
+
+    @property
     def query(self):
         return QueryString(urlparse.urlsplit(self).query)
     def with_query(self, query):
