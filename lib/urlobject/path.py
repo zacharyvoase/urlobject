@@ -5,7 +5,15 @@ import urllib
 import urlparse
 
 
+class Root(object):
+
+    def __get__(self, instance, cls):
+        return cls('/')
+
+
 class URLPath(unicode):
+
+    root = Root()
 
     def __repr__(self):
         return 'URLPath(%r)' % (unicode(self),)

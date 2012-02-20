@@ -10,6 +10,11 @@ class URLPathTest(unittest.TestCase):
     def test_preserves_equality_with_original_string(self):
         assert URLPath(u'/a/b/c') == u'/a/b/c'
 
+    def test_root_always_returns_the_root_path(self):
+        assert URLPath.root == u'/'
+        assert URLPath(u'/').root == u'/'
+        assert URLPath(u'/a/b/c').root == u'/'
+
     def test_preserves_hash_of_the_original_string(self):
         assert hash(URLPath(u'/a/b/c')) == hash(u'/a/b/c')
 
