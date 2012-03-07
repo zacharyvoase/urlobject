@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='URLObject',
-    version='2.0.0',
+    version='2.0.1',
     description='A utility class for manipulating URLs.',
     author='Zachary Voase',
     author_email='z@zacharyvoase.com',
