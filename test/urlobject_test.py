@@ -106,6 +106,11 @@ class URLObjectPropertyTest(unittest.TestCase):
     def test_fragment_returns_fragment(self):
         assert self.url.fragment == u'foo'
 
+    def test_fragment_is_decoded_and_encoded_correctly(self):
+        url = URLObject(u'https://example.com/#frag%20ment')
+        assert url.fragment == u'frag ment'
+        assert url.with_fragment('foo bar#baz') == u'https://example.com/#foo%20bar%23baz'
+
     def test_auth_properties_can_parse_username_and_password(self):
         url = URLObject(u'https://zack:12345@github.com/')
         assert url.username == u'zack'

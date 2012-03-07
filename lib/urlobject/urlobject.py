@@ -1,7 +1,7 @@
 import urlparse
 
 from netloc import Netloc
-from path import URLPath
+from path import URLPath, path_encode, path_decode
 from ports import DEFAULT_PORTS
 from query_string import QueryString
 
@@ -149,9 +149,9 @@ class URLObject(unicode):
 
     @property
     def fragment(self):
-        return urlparse.urlsplit(self).fragment
+        return path_decode(urlparse.urlsplit(self).fragment)
     def with_fragment(self, fragment):
-        return self.__replace(fragment=fragment)
+        return self.__replace(fragment=path_encode(fragment))
     def without_fragment(self):
         return self.__replace(fragment='')
 
