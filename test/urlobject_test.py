@@ -114,16 +114,19 @@ class URLObjectPropertyTest(unittest.TestCase):
         url = URLObject(u'https://zack:12345@github.com/')
         assert url.username == u'zack'
         assert url.password == u'12345'
+        assert url.auth == (u'zack', u'12345')
 
     def test_auth_properties_can_parse_username(self):
         url = URLObject(u'https://zack@github.com/')
         assert url.username == u'zack'
         assert url.password is None
+        assert url.auth == (u'zack', None)
 
     def test_auth_properties_return_None_with_no_username_or_password(self):
         url = URLObject(u'https://github.com/')
         assert url.username is None
         assert url.password is None
+        assert url.auth == (None, None)
 
 
 class URLObjectModificationTest(unittest.TestCase):
@@ -138,6 +141,11 @@ class URLObjectModificationTest(unittest.TestCase):
     def test_with_netloc_replaces_netloc(self):
         assert (self.url.with_netloc('example.com') ==
                 u'https://example.com/zacharyvoase/urlobject?spam=eggs#foo')
+
+    def test_with_hostname_replaces_hostname(self):
+        url = URLObject(u'https://user:pass@github.com/')
+        assert (url.with_hostname('example.com') ==
+                u'https://user:pass@example.com/')
 
     def test_with_username_adds_username(self):
         url = URLObject(u'https://github.com/')

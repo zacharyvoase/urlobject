@@ -54,8 +54,6 @@ class URLObject(unicode):
         return self.netloc.hostname
     def with_hostname(self, hostname):
         return self.with_netloc(self.netloc.with_hostname(hostname))
-    def without_hostname(self):
-        return self.with_netloc(self.netloc.without_hostname())
 
     @property
     def port(self):

@@ -9,6 +9,7 @@ class URLPathTest(unittest.TestCase):
 
     def test_preserves_equality_with_original_string(self):
         assert URLPath(u'/a/b/c') == u'/a/b/c'
+        assert URLPath(u'a/b/c') == u'a/b/c'
 
     def test_root_always_returns_the_root_path(self):
         assert URLPath.root == u'/'
@@ -21,6 +22,7 @@ class URLPathTest(unittest.TestCase):
     def test_segments_breaks_the_path_into_segments(self):
         assert URLPath(u'/a/b/c').segments == (u'a', u'b', u'c')
         assert URLPath(u'/a/b/c/').segments == (u'a', u'b', u'c', u'')
+        assert URLPath(u'a/b/c').segments == (u'a', u'b', u'c')
 
     def test_segments_decodes_percent_escapes(self):
         assert URLPath(u'/a%20b/c%2Fd/').segments == (u'a b', u'c/d', u'')

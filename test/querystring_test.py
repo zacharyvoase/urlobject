@@ -127,6 +127,10 @@ class QueryStringTest(unittest.TestCase):
         assert added.dict == {u'abc': u'123', u'foo': u'bar', u'xyz': u'456'}
         added2 = s.add_params([(u'abc', u'123')], foo=u'bar', xyz='456')
         assert added2.dict == {u'abc': u'123', u'foo': u'bar', u'xyz': u'456'}
+        # It also has to fail in the same way as `dict`. If you pass more than
+        # one positional argument it should raise a TypeError.
+        self.assertRaises(TypeError,
+                          s.add_params, {'abc': '123'}, {'foo': 'bar'})
 
     def test_add_params_accepts_the_same_parameter_name_multiple_times(self):
         s = (QueryString(u'')
