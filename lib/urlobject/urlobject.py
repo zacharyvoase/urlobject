@@ -17,6 +17,8 @@ class URLObject(unicode):
     methods return *new* objects; you need to consider this when using
     :class:`URLObject` in your own code.
     """
+    def __init__(self, string=u'', encoding=None, errors='strict'):
+        super(URLObject, self).__init__(string, encoding, errors)
 
     def __repr__(self):
         return 'URLObject(%r)' % (unicode(self),)
