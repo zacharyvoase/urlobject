@@ -179,3 +179,12 @@ class URLObject(unicode):
         """Replace a field in the ``urlparse.SplitResult`` for this URL."""
         return type(self)(urlparse.urlunsplit(
             urlparse.urlsplit(self)._replace(**replace)))
+
+
+if not hasattr(urlparse, 'ResultMixin'):
+    def _replace(split_result, **replace):
+        return urlparse.SplitResult(
+            **dict((attr, replace.get(attr, getattr(split_result, attr)))
+                for attr in ('scheme', 'netloc', 'path', 'query', 'fragment')))
+    urlparse.BaseResult._replace = _replace
+    del _replace

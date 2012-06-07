@@ -90,7 +90,7 @@ class QueryString(unicode):
 
 
 qs_encode = lambda s: urllib.quote(s.encode('utf-8'))
-qs_decode = lambda s: urlparse.unquote(str(s).replace('+', ' ')).decode('utf-8')
+qs_decode = lambda s: urllib.unquote(str(s).replace('+', ' ')).decode('utf-8')
 
 
 def get_params_list(*args, **kwargs):
