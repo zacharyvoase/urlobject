@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>URLObject by zacharyvoase</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>URLObject</h1>
+        <p>URLs for humans.</p>
+        <p class="view"><a href="https://github.com/zacharyvoase/urlobject">View the Project on GitHub <small>zacharyvoase/urlobject</small></a></p>
+        <ul>
+          <li><a href="https://github.com/zacharyvoase/urlobject/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/zacharyvoase/urlobject/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/zacharyvoase/urlobject">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>URLObject 2</h1>
+
+<p><code>URLObject</code> is a utility class for manipulating URLs. The latest incarnation of
+this library builds upon the ideas of its predecessor, but aims for a clearer
+API, focusing on proper method names over operator overrides. It's also being
+developed from the ground up in a test-driven manner, with comprehensive
+documentation.</p>
+
+<h2>Tour</h2>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">urlobject</span> <span class="kn">import</span> <span class="n">URLObject</span>
+</pre>
+</div>
+
+
+<p>Create a URLObject with a string representing a URL. <code>URLObject</code> is a regular
+subclass of <code>unicode</code>, it just has several properties and methods which make it
+easier to manipulate URLs. All the basic slots from urlsplit are there:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="n">URLObject</span><span class="p">(</span><span class="s">"https://github.com/zacharyvoase/urlobject?spam=eggs#foo"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">unicode</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="go">u'https://github.com/zacharyvoase/urlobject?spam=eggs#foo'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">scheme</span>
+<span class="go">u'https'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">netloc</span>
+<span class="go">Netloc(u'github.com')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">hostname</span>
+<span class="go">u'github.com'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">url</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+<span class="go">(None, None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">url</span><span class="o">.</span><span class="n">port</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">default_port</span>
+<span class="go">443</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">path</span>
+<span class="go">URLPath(u'/zacharyvoase/urlobject')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span>
+<span class="go">QueryString(u'spam=eggs')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">fragment</span>
+<span class="go">u'foo'</span>
+</pre>
+</div>
+
+
+<p>You can replace any of these slots using a <code>with_*()</code> method. Remember
+that, because <code>unicode</code> (and therefore <code>URLObject</code>) is immutable, these methods
+all return new URLs:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">with_scheme</span><span class="p">(</span><span class="s">'http'</span><span class="p">)</span>
+<span class="go">URLObject(u'http://github.com/zacharyvoase/urlobject?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">with_netloc</span><span class="p">(</span><span class="s">'example.com'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://example.com/zacharyvoase/urlobject?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">with_auth</span><span class="p">(</span><span class="s">'alice'</span><span class="p">,</span> <span class="s">'1234'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://alice:1234@github.com/zacharyvoase/urlobject?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">with_path</span><span class="p">(</span><span class="s">'/some_page'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/some_page?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">with_query</span><span class="p">(</span><span class="s">'funtimes=yay'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?funtimes=yay#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">with_fragment</span><span class="p">(</span><span class="s">'example'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#example')</span>
+</pre>
+</div>
+
+
+<p>For the query and fragment, <code>without_</code> methods also exist:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">without_query</span><span class="p">()</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">without_fragment</span><span class="p">()</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs')</span>
+</pre>
+</div>
+
+
+<h3>Relative URL Resolution</h3>
+
+<p>You can resolve relative URLs against a URLObject using <code>relative()</code>:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'another-project'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/another-project')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'?different-query-string'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?different-query-string')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'#frag'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs#frag')</span>
+</pre>
+</div>
+
+
+<p>Absolute URLs will just be returned as-is:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'http://example.com/foo'</span><span class="p">)</span>
+<span class="go">URLObject(u'http://example.com/foo')</span>
+</pre>
+</div>
+
+
+<p>And you can specify as much or as little of the new URL as you like:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'//example.com/foo'</span><span class="p">)</span> <span class="c"># Preserve scheme</span>
+<span class="go">URLObject(u'https://example.com/foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'/dvxhouse/intessa'</span><span class="p">)</span> <span class="c"># Just change path</span>
+<span class="go">URLObject(u'https://github.com/dvxhouse/intessa')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'/dvxhouse/intessa?foo=bar'</span><span class="p">)</span> <span class="c"># Change path and query</span>
+<span class="go">URLObject(u'https://github.com/dvxhouse/intessa?foo=bar')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">relative</span><span class="p">(</span><span class="s">'/dvxhouse/intessa?foo=bar#baz'</span><span class="p">)</span> <span class="c"># Change path, query and fragment</span>
+<span class="go">URLObject(u'https://github.com/dvxhouse/intessa?foo=bar#baz')</span>
+</pre>
+</div>
+
+
+<h3>Path</h3>
+
+<p>The <code>path</code> property is an instance of <code>URLPath</code>, which has several methods and
+properties for manipulating the path string:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">path</span>
+<span class="go">URLPath(u'/zacharyvoase/urlobject')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span>
+<span class="go">URLPath(u'/zacharyvoase/')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">segments</span>
+<span class="go">(u'zacharyvoase', u'urlobject')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">add_segment</span><span class="p">(</span><span class="s">'subnode'</span><span class="p">)</span>
+<span class="go">URLPath(u'/zacharyvoase/urlobject/subnode')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">root</span>
+<span class="go">URLPath(u'/')</span>
+</pre>
+</div>
+
+
+<p>Some of these are aliased on the URL itself:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">parent</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">add_path_segment</span><span class="p">(</span><span class="s">'subnode'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject/subnode?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">add_path</span><span class="p">(</span><span class="s">'tree/urlobject2'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject/tree/urlobject2?spam=eggs#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">root</span>
+<span class="go">URLObject(u'https://github.com/?spam=eggs#foo')</span>
+</pre>
+</div>
+
+
+<h3>Query string</h3>
+
+<p>The <code>query</code> property is an instance of <code>QueryString</code>, so you can access
+sub-attributes of that with richer representations of the query string:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span>
+<span class="go">QueryString(u'spam=eggs')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">list</span>
+<span class="go">[(u'spam', u'eggs')]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">dict</span>
+<span class="go">{u'spam': u'eggs'}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">multi_dict</span>
+<span class="go">{u'spam': [u'eggs']}</span>
+</pre>
+</div>
+
+
+<p>Modifying the query string is easy, too. You can 'add' or 'set' parameters: any
+method beginning with <code>add_</code> will allow you to use the same parameter name
+multiple times in the query string; methods beginning with <code>set_</code> will only
+allow one value for a given parameter name. Don't forget that each method will
+return a <em>new</em> <code>QueryString</code> instance:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">add_param</span><span class="p">(</span><span class="s">u'spam'</span><span class="p">,</span> <span class="s">u'ham'</span><span class="p">)</span>
+<span class="go">QueryString(u'spam=eggs&amp;spam=ham')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s">u'spam'</span><span class="p">,</span> <span class="s">u'ham'</span><span class="p">)</span>
+<span class="go">QueryString(u'spam=ham')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">add_params</span><span class="p">({</span><span class="s">u'spam'</span><span class="p">:</span> <span class="s">u'ham'</span><span class="p">,</span> <span class="s">u'foo'</span><span class="p">:</span> <span class="s">u'bar'</span><span class="p">})</span>
+<span class="go">QueryString(u'spam=eggs&amp;foo=bar&amp;spam=ham')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">set_params</span><span class="p">({</span><span class="s">u'spam'</span><span class="p">:</span> <span class="s">u'ham'</span><span class="p">,</span> <span class="s">u'foo'</span><span class="p">:</span> <span class="s">u'bar'</span><span class="p">})</span>
+<span class="go">QueryString(u'foo=bar&amp;spam=ham')</span>
+</pre>
+</div>
+
+
+<p>Delete parameters with <code>del_param()</code> and <code>del_params()</code>. These will remove all
+appearances of the requested parameter name from the <code>QueryString</code>:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">del_param</span><span class="p">(</span><span class="s">u'spam'</span><span class="p">)</span>
+<span class="go">QueryString(u'')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">add_params</span><span class="p">({</span><span class="s">u'foo'</span><span class="p">:</span> <span class="s">u'bar'</span><span class="p">})</span><span class="o">.</span><span class="n">del_params</span><span class="p">([</span><span class="s">'spam'</span><span class="p">,</span> <span class="s">'foo'</span><span class="p">])</span>
+<span class="go">QueryString(u'')</span>
+</pre>
+</div>
+
+
+<p>Again, some of these methods are aliased on the <code>URLObject</code> directly:</p>
+
+<div class="highlight">
+<pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">add_query_param</span><span class="p">(</span><span class="s">u'spam'</span><span class="p">,</span> <span class="s">u'ham'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?spam=eggs&amp;spam=ham#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">set_query_param</span><span class="p">(</span><span class="s">u'spam'</span><span class="p">,</span> <span class="s">u'ham'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject?spam=ham#foo')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span><span class="o">.</span><span class="n">del_query_param</span><span class="p">(</span><span class="s">u'spam'</span><span class="p">)</span>
+<span class="go">URLObject(u'https://github.com/zacharyvoase/urlobject#foo')</span>
+</pre>
+</div>
+
+
+<h2>(Un)license</h2>
+
+<p>This is free and unencumbered software released into the public domain.</p>
+
+<p>Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+software, either in source code form or as a compiled binary, for any purpose,
+commercial or non-commercial, and by any means.</p>
+
+<p>In jurisdictions that recognize copyright laws, the author or authors of this
+software dedicate any and all copyright interest in the software to the public
+domain. We make this dedication for the benefit of the public at large and to
+the detriment of our heirs and successors. We intend this dedication to be an
+overt act of relinquishment in perpetuity of all present and future rights to
+this software under copyright law.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+<p>For more information, please refer to <a href="http://unlicense.org/">http://unlicense.org/</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/zacharyvoase">zacharyvoase</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
