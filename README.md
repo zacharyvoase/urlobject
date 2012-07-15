@@ -1,5 +1,7 @@
 # URLObject 2
 
+[![Build Status](https://secure.travis-ci.org/zacharyvoase/urlobject.png?branch=master)](http://travis-ci.org/zacharyvoase/urlobject)
+
 `URLObject` is a utility class for manipulating URLs. The latest incarnation of
 this library builds upon the ideas of its predecessor, but aims for a clearer
 API, focusing on proper method names over operator overrides. It's also being
