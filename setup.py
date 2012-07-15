@@ -12,6 +12,5 @@ setup(
     author='Zachary Voase',
     author_email='z@zacharyvoase.com',
     url='http://github.com/zacharyvoase/urlobject',
-    package_dir={'': 'lib'},
-    packages=find_packages(where='lib'),
+    packages=find_packages(exclude=('test',)),
 )
