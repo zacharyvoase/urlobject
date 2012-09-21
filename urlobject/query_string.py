@@ -49,7 +49,7 @@ class QueryString(unicode):
     def add_param(self, name, value):
         if value is None:
             parameter = qs_encode(name)
-        elif not isinstance(value, basestring):
+        elif not isinstance(value, basestring) and hasattr(value, '__iter__'):
             # value is a list or tuple
             parameter = '&'.join([qs_encode(name) + '=' + qs_encode(val) for val in value])
         else:
