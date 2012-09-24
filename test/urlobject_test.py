@@ -265,6 +265,10 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (self.url.add_query_params([(u'spam', u'ham'), (u'foo', u'bar')]) ==
                 u'https://github.com/zacharyvoase/urlobject?spam=eggs&spam=ham&foo=bar#foo')
 
+    def test_add_query_params_with_multiple_values_adds_the_same_query_parameter_multiple_times(self):
+        assert (self.url.add_query_params({u'foo': [u'bar', 'baz']}) ==
+                u'https://github.com/zacharyvoase/urlobject?spam=eggs&foo=bar&foo=baz#foo')
+
     def test_set_query_param_adds_or_replaces_one_query_parameter(self):
         assert (self.url.set_query_param(u'spam', u'ham') ==
                 u'https://github.com/zacharyvoase/urlobject?spam=ham#foo')
@@ -273,9 +277,16 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (self.url.set_query_params({u'foo': u'bar'}, spam=u'ham') ==
                 u'https://github.com/zacharyvoase/urlobject?foo=bar&spam=ham#foo')
 
-    def test_set_query_params_with_multiple_values(self):
+    def test_set_query_params_with_multiple_values_adds_or_replaces_the_same_parameter_multiple_times(self):
+        assert (self.url.set_query_params({u'spam': [u'bar', 'baz']}) ==
+                u'https://github.com/zacharyvoase/urlobject?spam=bar&spam=baz#foo')
         assert (self.url.set_query_params({u'foo': [u'bar', 'baz']}) ==
                 u'https://github.com/zacharyvoase/urlobject?spam=eggs&foo=bar&foo=baz#foo')
+        # Ensure it removes all appearances of an existing name before adding
+        # the new ones.
+        url = URLObject(u'https://github.com/zacharyvoase/urlobject?foo=bar&foo=baz#foo')
+        assert (url.set_query_params({u'foo': [u'spam', u'ham']}) ==
+                u'https://github.com/zacharyvoase/urlobject?foo=spam&foo=ham#foo')
 
     def test_del_query_param_removes_one_query_parameter(self):
         assert (self.url.del_query_param(u'spam') ==

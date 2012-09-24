@@ -137,6 +137,11 @@ class QueryStringTest(unittest.TestCase):
              .add_params([(u'abc', u'123'), (u'abc', u'456')]))
         assert s.list == [(u'abc', u'123'), (u'abc', u'456')]
 
+    def test_add_params_with_multiple_values_adds_the_same_parameter_multiple_times(self):
+        s = QueryString(u'')
+        assert (s.add_params({u'foo': [u'bar', u'baz']}) ==
+                s.add_param(u'foo', u'bar').add_param(u'foo', u'baz'))
+
     def test_set_params_is_equivalent_to_calling_set_param_multiple_times(self):
         s = QueryString(u'')
         assert (s.set_params([(u'abc', u'123'), (u'def', u'456')]) ==
@@ -153,6 +158,14 @@ class QueryStringTest(unittest.TestCase):
         s = (QueryString(u'')
              .set_params([(u'abc', u'123'), (u'abc', u'456')]))
         assert s.list == [(u'abc', u'456')]
+
+    def test_set_params_with_multiple_values_sets_the_same_name_multiple_times(self):
+        s = QueryString(u'foo=spam')
+        assert (s.set_params({u'foo': [u'bar', u'baz']}) ==
+                u'foo=bar&foo=baz')
+        s2 = QueryString(u'foo=bar&foo=baz')
+        assert (s2.set_params({u'foo': [u'spam', u'ham']}) ==
+                u'foo=spam&foo=ham')
 
     def test_del_params_accepts_an_iterable_and_removes_all_listed_parameters(self):
         s = QueryString(u'abc=123&def=456&xyz=789')
