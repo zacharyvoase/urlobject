@@ -273,6 +273,10 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (self.url.set_query_params({u'foo': u'bar'}, spam=u'ham') ==
                 u'https://github.com/zacharyvoase/urlobject?foo=bar&spam=ham#foo')
 
+    def test_set_query_params_with_multiple_values(self):
+        assert (self.url.set_query_params({u'foo': [u'bar', 'baz']}) ==
+                u'https://github.com/zacharyvoase/urlobject?spam=eggs&foo=bar&foo=baz#foo')
+
     def test_del_query_param_removes_one_query_parameter(self):
         assert (self.url.del_query_param(u'spam') ==
                 u'https://github.com/zacharyvoase/urlobject#foo')
