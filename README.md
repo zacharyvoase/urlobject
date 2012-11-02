@@ -8,6 +8,12 @@ API, focusing on proper method names over operator overrides. It's also being
 developed from the ground up in a test-driven manner, and has full Sphinx
 documentation.
 
+## Installation
+
+Install using `pip`.
+
+    pip install URLObject
+
 ## Tour
 
 ```pycon
