@@ -95,7 +95,7 @@ class QueryStringTest(unittest.TestCase):
 
     def test_add_param_encodes_special_characters(self):
         s = QueryString(u'abc=123')
-        assert s.add_param(u'd e f', u'4+5#6') == u'abc=123&d%20e%20f=4%2B5%236'
+        assert s.add_param(u'd e f', u'4+5#6') == u'abc=123&d+e+f=4%2B5%236'
 
     def test_set_param_replaces_existing_parameter_names(self):
         s = QueryString(u'abc=123&abc=456')

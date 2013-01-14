@@ -92,8 +92,18 @@ class QueryString(unicode):
         return qs
 
 
-qs_encode = lambda s: urllib.quote(s.encode('utf-8'))
-qs_decode = lambda s: urllib.unquote(str(s).replace('+', ' ')).decode('utf-8')
+def qs_encode(s):
+    """Quote unicode or str using query string rules."""
+    if isinstance(s, unicode):
+        s = s.encode('utf-8')
+    return urllib.quote_plus(s).decode('utf-8')
+
+
+def qs_decode(s):
+    """Unquote unicode or str using query string rules."""
+    if isinstance(s, unicode):
+        s = s.encode('utf-8')
+    return urllib.unquote_plus(s).decode('utf-8')
 
 
 def get_params_list(*args, **kwargs):
