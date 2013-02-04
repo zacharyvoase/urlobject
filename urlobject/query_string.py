@@ -125,9 +125,13 @@ def _qs_decode_py3(s):
 if hasattr(urllib, 'quote'):
     qs_encode = _qs_encode_py2
     qs_decode = _qs_decode_py2
+    del _qs_encode_py3
+    del _qs_decode_py3
 else:
     qs_encode = _qs_encode_py3
     qs_decode = _qs_decode_py3
+    del _qs_encode_py2
+    del _qs_decode_py2
 
 
 def get_params_list(*args, **kwargs):
