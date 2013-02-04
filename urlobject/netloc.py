@@ -1,4 +1,9 @@
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
+    unicode = basestring = str
 
 
 class Netloc(unicode):
@@ -16,15 +21,15 @@ class Netloc(unicode):
     @classmethod
     def __unsplit(cls, username, password, hostname, port):
         """Put together a :class:`Netloc` from its constituent parts."""
-        auth_string = u''
+        auth_string = ''
         if username:
             auth_string = username
             if password:
-                auth_string += u':' + password
+                auth_string += ':' + password
             auth_string += '@'
-        port_string = u''
+        port_string = ''
         if port is not None:
-            port_string = u':%d' % port
+            port_string = ':%d' % port
         return cls(auth_string + hostname + port_string)
 
     @property
