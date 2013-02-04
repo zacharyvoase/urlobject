@@ -1,5 +1,8 @@
 """Default port numbers for the URI schemes supported by urlparse."""
 
+from __future__ import unicode_literals
+
+
 DEFAULT_PORTS = {
     'ftp': 21,
     'gopher': 70,
