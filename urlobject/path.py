@@ -138,8 +138,16 @@ class URLPath(unicode):
         return type(self)(posixpath.join(self, path_encode(path, safe='/')))
 
 
-def path_encode(string, safe=''):
-    return urllib.quote(string.encode('utf-8'), safe=safe)
+def path_encode(s, safe=''):
+    """Quote unicode or str using path rules."""
+    if isinstance(s, unicode):
+        s = s.encode('utf-8')
+    if isinstance(safe, unicode):
+        safe = safe.encode('utf-8')
+    return urllib.quote(s, safe=safe).decode('utf-8')
 
-def path_decode(string):
-    return urllib.unquote(string).decode('utf-8')
+
+def path_decode(s):
+    if isinstance(s, unicode):
+        s = s.encode('utf-8')
+    return urllib.unquote(s).decode('utf-8')
