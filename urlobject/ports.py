@@ -1,5 +1,6 @@
 """Default port numbers for the URI schemes supported by urlparse."""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
