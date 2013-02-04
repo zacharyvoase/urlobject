@@ -4,7 +4,12 @@ from __future__ import unicode_literals
 import collections
 import re
 import urllib
-import urlparse
+
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
 
 
 class QueryString(unicode):

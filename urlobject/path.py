@@ -5,7 +5,12 @@ from __future__ import unicode_literals
 
 import posixpath
 import urllib
-import urlparse
+
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
 
 
 class Root(object):

@@ -1,7 +1,11 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
 
 from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode
