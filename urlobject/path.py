@@ -144,7 +144,7 @@ class URLPath(unicode):
         return type(self)(posixpath.join(self, path_encode(path, safe='/')))
 
 
-def path_encode(s, safe=''):
+def _path_encode_py2(s, safe=''):
     """Quote unicode or str using path rules."""
     if isinstance(s, unicode):
         s = s.encode('utf-8')
@@ -152,8 +152,31 @@ def path_encode(s, safe=''):
         safe = safe.encode('utf-8')
     return urllib.quote(s, safe=safe).decode('utf-8')
 
+def _path_encode_py3(s, safe=''):
+    """Quote str or bytes using path rules."""
+    # s can be bytes or unicode, urllib.parse.quote() assumes
+    # utf-8 if encoding is necessary.
+    return urlparse.quote(s, safe=safe)
 
-def path_decode(s):
+def _path_decode_py2(s):
+    """Unquote unicode or str using path rules."""
     if isinstance(s, unicode):
         s = s.encode('utf-8')
     return urllib.unquote(s).decode('utf-8')
+
+def _path_decode_py3(s):
+    """Unquote str or bytes using path rules."""
+    if isinstance(s, bytes):
+        s = s.decode('utf-8')
+    return urlparse.unquote(s)
+
+if hasattr(urllib, 'quote'):
+    path_encode = _path_encode_py2
+    path_decode = _path_decode_py2
+    del _path_encode_py3
+    del _path_decode_py3
+else:
+    path_encode = _path_encode_py3
+    path_decode = _path_decode_py3
+    del _path_encode_py2
+    del _path_decode_py2
