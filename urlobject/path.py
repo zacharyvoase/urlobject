@@ -11,6 +11,7 @@ try:
 except ImportError:
     # Hello Python 3
     import urllib.parse as urlparse
+    unicode = str
 
 
 class Root(object):

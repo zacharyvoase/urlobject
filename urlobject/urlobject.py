@@ -6,6 +6,7 @@ try:
 except ImportError:
     # Hello Python 3
     import urllib.parse as urlparse
+    unicode = str
 
 from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode
