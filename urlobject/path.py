@@ -147,16 +147,35 @@ class URLPath(unicode):
         return type(self)(posixpath.join(self, path_encode(path, safe='/')))
 
 
-def path_encode(s, safe=''):
-    """Quote unicode or str using path rules."""
-    if isinstance(s, unicode):
-        s = s.encode('utf-8')
-    if isinstance(safe, unicode):
-        safe = safe.encode('utf-8')
-    return urllib.quote(s, safe=safe).decode('utf-8')
+if hasattr(urllib, 'quote'):
+    # Python 2
 
+    def path_encode(s, safe=''):
+        """Quote unicode or str using path rules."""
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        if isinstance(safe, unicode):
+            safe = safe.encode('utf-8')
+        return urllib.quote(s, safe=safe).decode('utf-8')
 
-def path_decode(s):
-    if isinstance(s, unicode):
-        s = s.encode('utf-8')
-    return urllib.unquote(s).decode('utf-8')
+    def path_decode(s):
+        """Unquote unicode or str using path rules."""
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        return urllib.unquote(s).decode('utf-8')
+
+else:
+    # Python 3
+    import urllib.parse as urlparse
+
+    def path_encode(s, safe=''):
+        """Quote str or bytes using path rules."""
+        # s can be bytes or unicode, Python 3 urllib.parse.quote() assumes
+        # utf-8 if encoding is necessary.
+        return urlparse.quote(s, safe=safe)
+
+    def path_decode(s):
+        """Unquote str or bytes using path rules."""
+        if isinstance(s, bytes):
+            s = s.decode('utf-8')
+        return urlparse.unquote(s)
