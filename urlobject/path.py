@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import posixpath
 import urllib
-import urlparse
+
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
+    unicode = str
 
 
 class Root(object):
@@ -33,17 +42,17 @@ class URLPath(unicode):
         """
         Split this path into (decoded) segments.
 
-            >>> URLPath(u'/a/b/c').segments
-            (u'a', u'b', u'c')
+            >>> URLPath('/a/b/c').segments
+            ('a', 'b', 'c')
 
         Non-leaf nodes will have a trailing empty string, and percent encodes
         will be decoded:
 
-            >>> URLPath(u'/a%20b/c%20d/').segments
-            (u'a b', u'c d', u'')
+            >>> URLPath('/a%20b/c%20d/').segments
+            ('a b', 'c d', '')
         """
         segments = tuple(map(path_decode, self.split('/')))
-        if segments[0] == u'':
+        if segments[0] == '':
             return segments[1:]
         return segments
 
@@ -52,10 +61,10 @@ class URLPath(unicode):
         """
         The parent of this node.
 
-            >>> URLPath(u'/a/b/c').parent
-            URLPath(u'/a/b/')
-            >>> URLPath(u'/foo/bar/').parent
-            URLPath(u'/foo/')
+            >>> URLPath('/a/b/c').parent
+            URLPath('/a/b/')
+            >>> URLPath('/foo/bar/').parent
+            URLPath('/foo/')
         """
         if self.is_leaf:
             return self.relative('.')
@@ -66,80 +75,107 @@ class URLPath(unicode):
         """
         Is this path a leaf node?
 
-            >>> URLPath(u'/a/b/c').is_leaf
+            >>> URLPath('/a/b/c').is_leaf
             True
-            >>> URLPath(u'/a/b/').is_leaf
+            >>> URLPath('/a/b/').is_leaf
             False
         """
-        return self and self.segments[-1] != u''
+        return self and self.segments[-1] != ''
 
     @property
     def is_relative(self):
         """
         Is this path relative?
 
-            >>> URLPath(u'a/b/c').is_relative
+            >>> URLPath('a/b/c').is_relative
             True
-            >>> URLPath(u'/a/b/c').is_relative
+            >>> URLPath('/a/b/c').is_relative
             False
         """
-        return self[0] != u'/'
+        return self[0] != '/'
 
     @property
     def is_absolute(self):
         """
         Is this path absolute?
 
-            >>> URLPath(u'a/b/c').is_absolute
+            >>> URLPath('a/b/c').is_absolute
             False
-            >>> URLPath(u'/a/b/c').is_absolute
+            >>> URLPath('/a/b/c').is_absolute
             True
         """
-        return self[0] == u'/'
+        return self[0] == '/'
 
     def relative(self, rel_path):
         """
         Resolve a relative path against this one.
 
-            >>> URLPath(u'/a/b/c').relative('.')
-            URLPath(u'/a/b/')
-            >>> URLPath(u'/a/b/c').relative('d')
-            URLPath(u'/a/b/d')
-            >>> URLPath(u'/a/b/c').relative('../d')
-            URLPath(u'/a/d')
+            >>> URLPath('/a/b/c').relative('.')
+            URLPath('/a/b/')
+            >>> URLPath('/a/b/c').relative('d')
+            URLPath('/a/b/d')
+            >>> URLPath('/a/b/c').relative('../d')
+            URLPath('/a/d')
         """
         return type(self)(urlparse.urljoin(self, rel_path))
 
     def add_segment(self, segment):
-        u"""
+        """
         Add a segment to this path.
 
-            >>> URLPath(u'/a/b/').add_segment('c')
-            URLPath(u'/a/b/c')
+            >>> URLPath('/a/b/').add_segment('c')
+            URLPath('/a/b/c')
 
         Non-ASCII and reserved characters (including slashes) will be encoded:
 
-            >>> URLPath(u'/a/b/').add_segment(u'dé/f')
-            URLPath(u'/a/b/d%C3%A9%2Ff')
+            >>> URLPath('/a/b/').add_segment('dé/f')
+            URLPath('/a/b/d%C3%A9%2Ff')
         """
         return type(self)(posixpath.join(self, path_encode(segment)))
 
     def add(self, path):
-        u"""
+        """
         Add a partial path to this one.
 
         The only difference between this and :meth:`add_segment` is that slash
         characters will not be encoded, making it suitable for adding more than
         one path segment at a time:
 
-            >>> URLPath(u'/a/b/').add(u'dé/f/g')
-            URLPath(u'/a/b/d%C3%A9/f/g')
+            >>> URLPath('/a/b/').add('dé/f/g')
+            URLPath('/a/b/d%C3%A9/f/g')
         """
         return type(self)(posixpath.join(self, path_encode(path, safe='/')))
 
 
-def path_encode(string, safe=''):
-    return urllib.quote(string.encode('utf-8'), safe=safe)
+if hasattr(urllib, 'quote'):
+    # Python 2
 
-def path_decode(string):
-    return urllib.unquote(string).decode('utf-8')
+    def path_encode(s, safe=''):
+        """Quote unicode or str using path rules."""
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        if isinstance(safe, unicode):
+            safe = safe.encode('utf-8')
+        return urllib.quote(s, safe=safe).decode('utf-8')
+
+    def path_decode(s):
+        """Unquote unicode or str using path rules."""
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        return urllib.unquote(s).decode('utf-8')
+
+else:
+    # Python 3
+    import urllib.parse as urlparse
+
+    def path_encode(s, safe=''):
+        """Quote str or bytes using path rules."""
+        # s can be bytes or unicode, Python 3 urllib.parse.quote() assumes
+        # utf-8 if encoding is necessary.
+        return urlparse.quote(s, safe=safe)
+
+    def path_decode(s):
+        """Unquote str or bytes using path rules."""
+        if isinstance(s, bytes):
+            s = s.decode('utf-8')
+        return urlparse.unquote(s)

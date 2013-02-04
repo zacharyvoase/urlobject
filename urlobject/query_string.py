@@ -1,7 +1,17 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import collections
 import re
 import urllib
-import urlparse
+
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
+    unicode = str
+    basestring = str
 
 
 class QueryString(unicode):
@@ -92,18 +102,36 @@ class QueryString(unicode):
         return qs
 
 
-def qs_encode(s):
-    """Quote unicode or str using query string rules."""
-    if isinstance(s, unicode):
-        s = s.encode('utf-8')
-    return urllib.quote_plus(s).decode('utf-8')
+if hasattr(urllib, 'quote'):
+    # Python 2
 
+    def qs_encode(s):
+        """Quote unicode or str using query string rules."""
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        return urllib.quote_plus(s).decode('utf-8')
 
-def qs_decode(s):
-    """Unquote unicode or str using query string rules."""
-    if isinstance(s, unicode):
-        s = s.encode('utf-8')
-    return urllib.unquote_plus(s).decode('utf-8')
+    def qs_decode(s):
+        """Unquote unicode or str using query string rules."""
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        return urllib.unquote_plus(s).decode('utf-8')
+
+else:
+    # Python 3
+    import urllib.parse as urlparse
+
+    def qs_encode(s):
+        """Quote str or bytes using query string rules."""
+        # s can be bytes or unicode, Python 3 urllib.parse.quote() assumes
+        # utf-8 if encoding is necessary.
+        return urlparse.quote_plus(s)
+
+    def qs_decode(s):
+        """Unquote str or bytes using query string rules."""
+        if isinstance(s, bytes):
+            s = s.decode('utf-8')
+        return urlparse.unquote_plus(s)
 
 
 def get_params_list(*args, **kwargs):

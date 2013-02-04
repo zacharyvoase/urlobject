@@ -1,9 +1,17 @@
-import urlparse
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-from netloc import Netloc
-from path import URLPath, path_encode, path_decode
-from ports import DEFAULT_PORTS
-from query_string import QueryString
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
+    unicode = str
+
+from .netloc import Netloc
+from .path import URLPath, path_encode, path_decode
+from .ports import DEFAULT_PORTS
+from .query_string import QueryString
 
 
 class URLObject(unicode):
@@ -179,12 +187,3 @@ class URLObject(unicode):
         """Replace a field in the ``urlparse.SplitResult`` for this URL."""
         return type(self)(urlparse.urlunsplit(
             urlparse.urlsplit(self)._replace(**replace)))
-
-
-if not hasattr(urlparse, 'ResultMixin'):
-    def _replace(split_result, **replace):
-        return urlparse.SplitResult(
-            **dict((attr, replace.get(attr, getattr(split_result, attr)))
-                for attr in ('scheme', 'netloc', 'path', 'query', 'fragment')))
-    urlparse.BaseResult._replace = _replace
-    del _replace
