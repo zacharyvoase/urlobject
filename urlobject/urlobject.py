@@ -1,4 +1,8 @@
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
 
 from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode

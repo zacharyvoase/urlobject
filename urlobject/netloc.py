@@ -1,4 +1,8 @@
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
 
 
 class Netloc(unicode):
