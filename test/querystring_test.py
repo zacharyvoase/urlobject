@@ -3,16 +3,10 @@
 import unittest
 
 from urlobject.query_string import QueryString
+from urlobject.six import u
 
 
 class QueryStringTest(unittest.TestCase):
-
-    # Avoid u'\ufffd' which is a syntax error on Python 3.2.
-    # Instead rely on utf-8 encoding of this file. This results in
-    # a unicode literal on Python 3, and we can decode on Python 2.
-    unicode_obj = '�'
-    if hasattr(unicode_obj, 'decode'):
-        unicode_obj = unicode_obj.decode('utf-8')
 
     def test_preserves_equality_with_original_string(self):
         assert QueryString('abc=123') == 'abc=123'
@@ -38,7 +32,7 @@ class QueryStringTest(unittest.TestCase):
                 [('my weird field', 'q1!2"\'w$5&7/z8)?')])
 
     def test_list_correctly_decodes_utf_8(self):
-        assert QueryString('foo=%EF%BF%BD').list == [('foo', self.unicode_obj)]
+        assert QueryString('foo=%EF%BF%BD').list == [('foo', u('\ufffd'))]
 
     def test_list_doesnt_split_on_percent_encoded_special_chars(self):
         assert QueryString('a%26b%3Dc%3F=a%26b%3Dc%3F').list == [
@@ -96,7 +90,7 @@ class QueryStringTest(unittest.TestCase):
 
     def test_add_param_encodes_utf8(self):
         s = QueryString('abc=123')
-        assert s.add_param('foo', self.unicode_obj) == 'abc=123&foo=%EF%BF%BD'
+        assert s.add_param('foo', u('\ufffd')) == 'abc=123&foo=%EF%BF%BD'
 
     def test_add_param_allows_the_same_parameter_name_to_be_added_twice(self):
         s = QueryString('abc=123')

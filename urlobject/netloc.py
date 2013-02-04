@@ -1,12 +1,8 @@
-try:
-    import urlparse
-except ImportError:
-    # Hello Python 3
-    import urllib.parse as urlparse
-    unicode = basestring = str
+from .compat import urlparse
+from .six import text_type, u
 
 
-class Netloc(unicode):
+class Netloc(text_type):
 
     """
     A netloc string (``username:password@hostname:port``).
@@ -16,7 +12,7 @@ class Netloc(unicode):
     """
 
     def __repr__(self):
-        return 'Netloc(%r)' % (unicode(self),)
+        return u('Netloc(%r)') % (text_type(self),)
 
     @classmethod
     def __unsplit(cls, username, password, hostname, port):

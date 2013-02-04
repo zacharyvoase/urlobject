@@ -3,6 +3,7 @@
 import unittest
 
 from urlobject.path import URLPath
+from urlobject.six import u
 
 
 class URLPathTest(unittest.TestCase):
@@ -36,7 +37,7 @@ class URLPathTest(unittest.TestCase):
         assert URLPath.join_segments(('a', 'b', 'c', ''), absolute=False) == 'a/b/c/'
 
     def test_join_segments_encodes_non_ascii_and_special_characters_including_slash(self):
-        URLPath.join_segments(('a b', 'd/é')) == '/a%20b/d%2F%C3%A9'
+        assert URLPath.join_segments(('a b', u('d/\N{LATIN SMALL LETTER E WITH ACUTE}'))) == '/a%20b/d%2F%C3%A9'
 
     def test_is_leaf_node(self):
         assert URLPath('/a/b/c').is_leaf
@@ -79,7 +80,7 @@ class URLPathTest(unittest.TestCase):
         assert URLPath('/a/b/c').add_segment('d/') == '/a/b/c/d%2F'
 
     def test_add_segment_encodes_non_ascii_and_reserved_characters(self):
-        assert URLPath('/a/b/c').add_segment('d é') == '/a/b/c/d%20%C3%A9'
+        assert URLPath('/a/b/c').add_segment(u('d \N{LATIN SMALL LETTER E WITH ACUTE}')) == '/a/b/c/d%20%C3%A9'
 
     def test_add_segment_encodes_slash_characters(self):
         assert URLPath('/a/b/c').add_segment('d/e') == '/a/b/c/d%2Fe'
@@ -92,7 +93,7 @@ class URLPathTest(unittest.TestCase):
         assert URLPath('/a/b/c').add('d/e/f') == '/a/b/c/d/e/f'
 
     def test_add_encodes_non_ascii_and_reserved_characters(self):
-        assert URLPath('/a/b/c').add('d /é') == '/a/b/c/d%20/%C3%A9'
+        assert URLPath('/a/b/c').add(u('d /\N{LATIN SMALL LETTER E WITH ACUTE}')) == '/a/b/c/d%20/%C3%A9'
 
     def test_add_does_not_encode_slash_characters(self):
         assert URLPath('/a/b/c').add('d/e') == '/a/b/c/d/e'

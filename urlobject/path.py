@@ -3,12 +3,8 @@
 import posixpath
 import urllib
 
-try:
-    import urlparse
-except ImportError:
-    # Hello Python 3
-    import urllib.parse as urlparse
-    unicode = basestring = str
+from .compat import urlparse
+from .six import text_type, u
 
 
 class Root(object):
@@ -19,12 +15,12 @@ class Root(object):
         return cls('/')
 
 
-class URLPath(unicode):
+class URLPath(text_type):
 
     root = Root()
 
     def __repr__(self):
-        return 'URLPath(%r)' % (unicode(self),)
+        return u('URLPath(%r)') % (text_type(self),)
 
     @classmethod
     def join_segments(cls, segments, absolute=True):
@@ -155,11 +151,13 @@ def _path_encode_py2(s, safe=''):
         safe = safe.encode('utf-8')
     return urllib.quote(s, safe=safe).decode('utf-8')
 
+
 def _path_encode_py3(s, safe=''):
     """Quote str or bytes using path rules."""
     # s can be bytes or unicode, urllib.parse.quote() assumes
     # utf-8 if encoding is necessary.
     return urlparse.quote(s, safe=safe)
+
 
 def _path_decode_py2(s):
     """Unquote unicode or str using path rules."""
@@ -167,11 +165,13 @@ def _path_decode_py2(s):
         s = s.encode('utf-8')
     return urllib.unquote(s).decode('utf-8')
 
+
 def _path_decode_py3(s):
     """Unquote str or bytes using path rules."""
     if isinstance(s, bytes):
         s = s.decode('utf-8')
     return urlparse.unquote(s)
+
 
 if hasattr(urllib, 'quote'):
     path_encode = _path_encode_py2

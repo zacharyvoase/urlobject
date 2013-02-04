@@ -1,17 +1,12 @@
-try:
-    import urlparse
-except ImportError:
-    # Hello Python 3
-    import urllib.parse as urlparse
-    unicode = basestring = str
-
+from .compat import urlparse
 from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode
 from .ports import DEFAULT_PORTS
 from .query_string import QueryString
+from .six import text_type, u
 
 
-class URLObject(unicode):
+class URLObject(text_type):
 
     """
     A URL.
@@ -24,7 +19,7 @@ class URLObject(unicode):
     """
 
     def __repr__(self):
-        return 'URLObject(%r)' % (unicode(self),)
+        return u('URLObject(%r)') % (text_type(self),)
 
     @property
     def scheme(self):

@@ -3,18 +3,13 @@ import unittest
 from nose.tools import assert_raises
 
 from urlobject import URLObject
-
-try:
-    unicode
-except NameError:
-    # Hello Python 3
-    unicode = basestring = str
+from urlobject.six import text_type, u
 
 
 class URLObjectTest(unittest.TestCase):
 
     def setUp(self):
-        self.url_string = "https://github.com/zacharyvoase/urlobject?spam=eggs#foo"
+        self.url_string = u("https://github.com/zacharyvoase/urlobject?spam=eggs#foo")
 
     def test_urlobject_preserves_equality_with_the_original_string(self):
         assert URLObject(self.url_string) == self.url_string
@@ -25,8 +20,8 @@ class URLObjectTest(unittest.TestCase):
     def test_calling_unicode_on_a_urlobject_returns_a_normal_string(self):
         url = URLObject(self.url_string)
         # Normally `type(x) is Y` is a bad idea, but it's exactly what we want.
-        assert type(unicode(url)) is unicode
-        assert unicode(url) == self.url_string
+        assert type(text_type(url)) is text_type
+        assert text_type(url) == self.url_string
 
 
 class URLObjectRelativeTest(unittest.TestCase):
