@@ -1,9 +1,9 @@
 import urlparse
 
-from netloc import Netloc
-from path import URLPath, path_encode, path_decode
-from ports import DEFAULT_PORTS
-from query_string import QueryString
+from .netloc import Netloc
+from .path import URLPath, path_encode, path_decode
+from .ports import DEFAULT_PORTS
+from .query_string import QueryString
 
 
 class URLObject(unicode):
