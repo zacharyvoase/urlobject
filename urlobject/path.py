@@ -29,7 +29,10 @@ class URLPath(unicode):
     @classmethod
     def join_segments(cls, segments, absolute=True):
         """Create a :class:`URLPath` from an iterable of segments."""
-        path = cls('/')
+        if absolute:
+            path = cls('/')
+        else:
+            path = cls('')
         for segment in segments:
             path = path.add_segment(segment)
         return path

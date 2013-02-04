@@ -28,12 +28,12 @@ class URLPathTest(unittest.TestCase):
         assert URLPath('/a%20b/c%2Fd/').segments == ('a b', 'c/d', '')
 
     def test_join_segments_joins_segments_into_a_single_path(self):
-        URLPath.join_segments(('a', 'b', 'c')) == '/a/b/c'
-        URLPath.join_segments(('a', 'b', 'c', '')) == '/a/b/c/'
+        assert URLPath.join_segments(('a', 'b', 'c')) == '/a/b/c'
+        assert URLPath.join_segments(('a', 'b', 'c', '')) == '/a/b/c/'
 
     def test_join_segments_can_create_relative_paths(self):
-        URLPath.join_segments(('a', 'b', 'c'), absolute=False) == 'a/b/c'
-        URLPath.join_segments(('a', 'b', 'c', ''), absolute=False) == 'a/b/c/'
+        assert URLPath.join_segments(('a', 'b', 'c'), absolute=False) == 'a/b/c'
+        assert URLPath.join_segments(('a', 'b', 'c', ''), absolute=False) == 'a/b/c/'
 
     def test_join_segments_encodes_non_ascii_and_special_characters_including_slash(self):
         URLPath.join_segments(('a b', 'd/é')) == '/a%20b/d%2F%C3%A9'
