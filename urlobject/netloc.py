@@ -3,6 +3,7 @@ try:
 except ImportError:
     # Hello Python 3
     import urllib.parse as urlparse
+    unicode = basestring = str
 
 
 class Netloc(unicode):

@@ -4,6 +4,12 @@ from nose.tools import assert_raises
 
 from urlobject import URLObject
 
+try:
+    unicode
+except NameError:
+    # Hello Python 3
+    unicode = basestring = str
+
 
 class URLObjectTest(unittest.TestCase):
 
