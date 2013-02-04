@@ -1,1 +1,1 @@
-from urlobject import URLObject
+from .urlobject import URLObject

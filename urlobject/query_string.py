@@ -1,7 +1,13 @@
 import collections
 import re
 import urllib
-import urlparse
+
+try:
+    import urlparse
+except ImportError:
+    # Hello Python 3
+    import urllib.parse as urlparse
+    unicode = basestring = str
 
 
 class QueryString(unicode):
@@ -92,18 +98,40 @@ class QueryString(unicode):
         return qs
 
 
-def qs_encode(s):
+def _qs_encode_py2(s):
     """Quote unicode or str using query string rules."""
     if isinstance(s, unicode):
         s = s.encode('utf-8')
     return urllib.quote_plus(s).decode('utf-8')
 
+def _qs_encode_py3(s):
+    """Quote str or bytes using query string rules."""
+    # s can be bytes or unicode, urllib.parse.quote() assumes
+    # utf-8 if encoding is necessary.
+    return urlparse.quote_plus(s)
 
-def qs_decode(s):
+def _qs_decode_py2(s):
     """Unquote unicode or str using query string rules."""
     if isinstance(s, unicode):
         s = s.encode('utf-8')
     return urllib.unquote_plus(s).decode('utf-8')
+
+def _qs_decode_py3(s):
+    """Unquote str or bytes using query string rules."""
+    if isinstance(s, bytes):
+        s = s.decode('utf-8')
+    return urlparse.unquote_plus(s)
+
+if hasattr(urllib, 'quote'):
+    qs_encode = _qs_encode_py2
+    qs_decode = _qs_decode_py2
+    del _qs_encode_py3
+    del _qs_decode_py3
+else:
+    qs_encode = _qs_encode_py3
+    qs_decode = _qs_decode_py3
+    del _qs_encode_py2
+    del _qs_decode_py2
 
 
 def get_params_list(*args, **kwargs):
