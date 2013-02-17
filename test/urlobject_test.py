@@ -27,7 +27,7 @@ class URLObjectTest(unittest.TestCase):
 class ReadMeDocTest(unittest.TestCase):
     def test__doctest(self):
         result = doctest.testmod(urlobject_module)
-        self.assertGreater(result.attempted, 0, "No doctests were found")
+        self.assertTrue(result.attempted > 0, "No doctests were found")
         self.assertEquals(result.failed, 0, "There are failed doctests")
 
 class URLObjectRelativeTest(unittest.TestCase):
