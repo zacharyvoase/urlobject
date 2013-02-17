@@ -1,16 +1,34 @@
-.. URLObject documentation master file, created by
-   sphinx-quickstart on Sat Feb 11 19:49:37 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+URLObject 2
+===========
 
-Welcome to URLObject's documentation!
-=====================================
+**URLObject** is a utility class for manipulating URLs. The latest incarnation of
+this library builds upon the ideas of its predecessor, but aims for a clearer
+API, focusing on proper method names over operator overrides. It's also being
+developed from the ground up in a test-driven manner, and has full Sphinx
+documentation.
 
-Contents:
+**N.B.**: all doctests in this documentation use Python 3.3 syntax.
 
-.. toctree::
-   :maxdepth: 2
+API
+===
 
+.. autoclass:: urlobject.URLObject
+   :members: scheme, with_scheme,
+      netloc, with_netloc,
+      username, with_username, without_username,
+      password, with_password, without_password,
+      hostname, with_hostname,
+      port, default_port, with_port, without_port,
+      auth, with_auth, without_auth,
+      path, with_path, root, parent, is_leaf,
+      add_path_segment, add_path,
+      query, with_query, without_query,
+      query_list, query_dict, query_multi_dict,
+      add_query_param, add_query_params,
+      set_query_param, set_query_params,
+      del_query_param, del_query_params,
+      fragment, with_fragment, without_fragment,
+      relative
 
 
 Indices and tables
@@ -19,4 +37,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

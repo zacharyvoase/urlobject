@@ -1,9 +1,19 @@
+from __future__ import print_function
+
+import platform
+import doctest
 import unittest
 
 from nose.tools import assert_raises
-
+from urlobject import urlobject as urlobject_module
 from urlobject import URLObject
 from urlobject.six import text_type, u
+
+
+def dictsort(d):
+    """``repr()`` a dictionary with sorted key/value pairs, for doctests."""
+    items = sorted(d.items())
+    print('{' + ', '.join('%r: %r' % (k, v) for k, v in items) + '}')
 
 
 class URLObjectTest(unittest.TestCase):
@@ -22,6 +32,20 @@ class URLObjectTest(unittest.TestCase):
         # Normally `type(x) is Y` is a bad idea, but it's exactly what we want.
         assert type(text_type(url)) is text_type
         assert text_type(url) == self.url_string
+
+
+class SphinxDoctestsTest(unittest.TestCase):
+
+    def test__doctest(self):
+        result = doctest.testmod(urlobject_module,
+                                 extraglobs={'dictsort': dictsort})
+        if platform.python_version() < '3.2':
+            # Don't run doctests on pre-3.2.
+            return
+        failed = result.failed
+        attempted = result.attempted
+        self.assertTrue(attempted > 0, "No doctests were found")
+        self.assertEquals(failed, 0, "There are failed doctests")
 
 
 class URLObjectRelativeTest(unittest.TestCase):
