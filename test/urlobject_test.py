@@ -24,7 +24,7 @@ class URLObjectTest(unittest.TestCase):
         assert type(text_type(url)) is text_type
         assert text_type(url) == self.url_string
 
-class ReadMeDocTest(unittest.TestCase):
+class SphinxDoctestsTest(unittest.TestCase):
     def test__doctest(self):
         result = doctest.testmod(urlobject_module)
         self.assertTrue(result.attempted > 0, "No doctests were found")
