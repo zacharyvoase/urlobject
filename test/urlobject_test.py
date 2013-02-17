@@ -1,7 +1,8 @@
+import doctest
 import unittest
 
 from nose.tools import assert_raises
-
+from urlobject import urlobject as urlobject_module
 from urlobject import URLObject
 from urlobject.six import text_type, u
 
@@ -23,6 +24,11 @@ class URLObjectTest(unittest.TestCase):
         assert type(text_type(url)) is text_type
         assert text_type(url) == self.url_string
 
+class ReadMeDocTest(unittest.TestCase):
+    def test__doctest(self):
+        result = doctest.testmod(urlobject_module)
+        self.assertGreater(result.attempted, 0, "No doctests were found")
+        self.assertEquals(result.failed, 0, "There are failed doctests")
 
 class URLObjectRelativeTest(unittest.TestCase):
 
