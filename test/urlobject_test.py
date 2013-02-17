@@ -1,3 +1,4 @@
+import platform
 import doctest
 import unittest
 
@@ -27,8 +28,13 @@ class URLObjectTest(unittest.TestCase):
 class SphinxDoctestsTest(unittest.TestCase):
     def test__doctest(self):
         result = doctest.testmod(urlobject_module)
-        self.assertTrue(result.attempted > 0, "No doctests were found")
-        self.assertEquals(result.failed, 0, "There are failed doctests")
+        if platform.python_version() < '2.6':
+            failed, attempted = result
+        else:
+            failed = result.failed
+            attempted = result.attempted
+        self.assertTrue(attempted > 0, "No doctests were found")
+        self.assertEquals(failed, 0, "There are failed doctests")
 
 class URLObjectRelativeTest(unittest.TestCase):
 
