@@ -26,8 +26,6 @@ class URLObject(text_type):
     @property
     def scheme(self):
         """
-        Returns the scheme of the URL:
-
         >>> str(URLObject("http://www.google.com").scheme)
         'http'
         """
