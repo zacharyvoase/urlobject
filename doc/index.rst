@@ -7,28 +7,28 @@ API, focusing on proper method names over operator overrides. It's also being
 developed from the ground up in a test-driven manner, and has full Sphinx
 documentation.
 
-**N.B.**: all doctests in this documentation use Python 3.3 syntax.
+If you're new to this library, take a look at the :doc:`quickstart
+<quickstart>`. If you're just here for reference purposes, see the :doc:`API
+documentation <api>`.
 
-API
-===
+Installation
+------------
 
-.. autoclass:: urlobject.URLObject
-   :members: scheme, with_scheme,
-      netloc, with_netloc,
-      username, with_username, without_username,
-      password, with_password, without_password,
-      hostname, with_hostname,
-      port, default_port, with_port, without_port,
-      auth, with_auth, without_auth,
-      path, with_path, root, parent, is_leaf,
-      add_path_segment, add_path,
-      query, with_query, without_query,
-      query_list, query_dict, query_multi_dict,
-      add_query_param, add_query_params,
-      set_query_param, set_query_params,
-      del_query_param, del_query_params,
-      fragment, with_fragment, without_fragment,
-      relative
+Install using ``pip``. There are no dependencies, and the package is pure
+Python, tested on CPythons v2.5–3.3.
+
+.. code:: bash
+
+    pip install URLObject
+
+Contents
+--------
+
+.. toctree::
+    :maxdepth: 2
+
+    quickstart
+    api
 
 
 Indices and tables
