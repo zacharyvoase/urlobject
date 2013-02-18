@@ -76,7 +76,7 @@ class URLPath(text_type):
             >>> URLPath('/a/b/').is_leaf
             False
         """
-        return self and self.segments[-1] != ''
+        return self and self.segments[-1] != '' or False
 
     @property
     def is_relative(self):
