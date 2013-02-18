@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import platform
 import doctest
 import unittest
@@ -7,13 +5,13 @@ import unittest
 from nose.tools import assert_raises
 from urlobject import urlobject as urlobject_module
 from urlobject import URLObject
-from urlobject.six import text_type, u
+from urlobject.six import text_type, u, print_
 
 
 def dictsort(d):
     """``repr()`` a dictionary with sorted key/value pairs, for doctests."""
     items = sorted(d.items())
-    print('{' + ', '.join('%r: %r' % (k, v) for k, v in items) + '}')
+    print_('{' + ', '.join('%r: %r' % (k, v) for k, v in items) + '}')
 
 
 class URLObjectTest(unittest.TestCase):
