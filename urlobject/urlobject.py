@@ -496,7 +496,7 @@ class URLObject(text_type):
         """
         return self.__replace(fragment='')
         
-    def get_last_querystring_union_char(self):
+    def get_next_querystring_union_char(self):
         if not self.query_list:
             return '?'
         else:
