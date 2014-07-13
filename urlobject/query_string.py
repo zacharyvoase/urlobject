@@ -22,7 +22,7 @@ class QueryString(text_type):
         for name_value_pair in name_value_pairs:
             # Split the pair string into a naive, encoded (name, value) pair.
             name_value = name_value_pair.split('=', 1)
-            # 'param=' => ('param', None)
+            # 'param' => ('param', None)
             if len(name_value) == 1:
                 name, value = name_value + [None]
             # 'param=value' => ('param', 'value')
