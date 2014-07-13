@@ -3,7 +3,7 @@ import re
 import urllib
 
 from .compat import urlparse
-from .six import text_type, string_types, u
+from .six import text_type, string_types, integer_types, u
 
 
 class QueryString(text_type):
@@ -55,6 +55,8 @@ class QueryString(text_type):
             # value is a list or tuple
             parameter = '&'.join([qs_encode(name) + '=' + qs_encode(val) for val in value])
         else:
+            if isinstance(value, integer_types):
+                value = text_type(value)
             parameter = qs_encode(name) + '=' + qs_encode(value)
         if self:
             return type(self)(self + '&' + parameter)
