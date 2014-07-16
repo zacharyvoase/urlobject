@@ -3,7 +3,7 @@ import re
 import urllib
 
 from .compat import urlparse
-from .six import text_type, string_types, integer_types, u
+from .six import text_type, string_types, u
 
 
 class QueryString(text_type):
@@ -55,8 +55,6 @@ class QueryString(text_type):
             # value is a list or tuple
             parameter = '&'.join([qs_encode(name) + '=' + qs_encode(val) for val in value])
         else:
-            if isinstance(value, integer_types):
-                value = text_type(value)
             parameter = qs_encode(name) + '=' + qs_encode(value)
         if self:
             return type(self)(self + '&' + parameter)
@@ -114,13 +112,20 @@ def get_params_list(*args, **kwargs):
 
 def _qs_encode_py2(s):
     """Quote unicode or str using query string rules."""
+    if isinstance(s, (int, long)):
+        # Ease calling with int values which can be trivially stringified.
+        s = unicode(s)
     if isinstance(s, unicode):
+        # urllib.quote_plus() requires str not unicode.
         s = s.encode('utf-8')
     return urllib.quote_plus(s).decode('utf-8')
 
 
 def _qs_encode_py3(s):
     """Quote str or bytes using query string rules."""
+    if isinstance(s, int):
+        # Ease calling with int values which can be trivially stringified.
+        s = str(s)
     # s can be bytes or unicode, urllib.parse.quote() assumes
     # utf-8 if encoding is necessary.
     return urlparse.quote_plus(s)
