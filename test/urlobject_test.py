@@ -335,9 +335,6 @@ class URLObjectModificationTest(unittest.TestCase):
 
 class URLObjectEncodeTest(unittest.TestCase):
 
-    def setUp(self):
-        self.url = URLObject(u"https://host-\u03bb.com/path-\u03bb?key-\u03bb=val-\u03bb#fragment-\u03bb")
-
     def test_encode_hostname_idna(self):
         assert (URLObject(u'https://host-\u03bb.com/').encode() ==
                 'https://xn--host--6be.com/')
