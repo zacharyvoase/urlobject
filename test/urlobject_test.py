@@ -333,20 +333,20 @@ class URLObjectModificationTest(unittest.TestCase):
                 'https://github.com/zacharyvoase/urlobject?spam=eggs')
 
 
-class URLObjectEncodeTest(unittest.TestCase):
+class URLObjectReencodeTest(unittest.TestCase):
 
     def test_encode_hostname_idna(self):
-        assert (URLObject(u('https://host-\u03bb.com/')).encode() ==
+        assert (URLObject(u('https://host-\u03bb.com/')).reencode() ==
                 'https://xn--host--6be.com/')
 
     def test_encode_path(self):
-        assert (URLObject(u('https://example.com/path-\u03bb/path2')).encode() ==
+        assert (URLObject(u('https://example.com/path-\u03bb/path2')).reencode() ==
                 'https://example.com/path-%CE%BB/path2')
 
     def test_encode_query(self):
-        assert (URLObject(u('https://example.com/?key-\u03bb=val-\u03bb')).encode() ==
+        assert (URLObject(u('https://example.com/?key-\u03bb=val-\u03bb')).reencode() ==
                 'https://example.com/?key-%CE%BB=val-%CE%BB')
 
     def test_encode_fragment(self):
-        assert (URLObject(u('https://example.com/#fr\u03bbgment')).encode() ==
+        assert (URLObject(u('https://example.com/#fr\u03bbgment')).reencode() ==
                 'https://example.com/#fr%CE%BBgment')

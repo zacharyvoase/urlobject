@@ -538,7 +538,7 @@ class URLObject(text_type):
         return type(self)(urlparse.urlunsplit(
             urlparse.urlsplit(self)._replace(**replace)))
 
-    def encode(self):
+    def reencode(self):
         """
         Return an ASCII, URL-quoted, UTF-8-encoded, IDNA-conformant
         representation of the URL.
@@ -547,7 +547,7 @@ class URLObject(text_type):
         the first place, and so is useful for re-encoding a URL that was
         entered by a user.
 
-        >>> print(URLObject(u("http://éxample.com:80/påth/sëgment/?que®y=vałue#frågment")).encode())
+        >>> print(URLObject(u("http://éxample.com:80/påth/sëgment/?que®y=vałue#frågment")).reencode())
         http://xn--xample-9ua.com:80/p%C3%A5th/s%C3%ABgment/?que%C2%AEy=va%C5%82ue#fr%C3%A5gment
         """
         query = path_encode(self.query, safe='?&=')
