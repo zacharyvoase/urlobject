@@ -1,3 +1,4 @@
+# coding: utf-8
 from .compat import urlparse
 from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode
@@ -73,10 +74,14 @@ class URLObject(text_type):
         """
         Add or replace this URL's :attr:`.netloc`.
 
+        The netloc will be encoded with the IDNA ToAscii algorithm.
+
         >>> print(URLObject("http://www.google.com/a/b/c").with_netloc("www.amazon.com"))
         http://www.amazon.com/a/b/c
+        >>> print(URLObject("http://example.com/a/b/c").with_netloc("example-\u03bb.com"))
+        http://xn--example--5cg.com/a/b/c
         """
-        return self.__replace(netloc=netloc)
+        return self.__replace(netloc=netloc.encode('idna').decode('ascii'))
 
     @property
     def username(self):
@@ -532,3 +537,21 @@ class URLObject(text_type):
         """Replace a field in the ``urlparse.SplitResult`` for this URL."""
         return type(self)(urlparse.urlunsplit(
             urlparse.urlsplit(self)._replace(**replace)))
+
+    def encode(self):
+        """
+        Return an ASCII, URL-quoted, UTF-8-encoded, IDNA-conformant
+        representation of the URL.
+
+        This will properly encode any URL components that were not encoded in
+        the first place, and so is useful for re-encoding a URL that was
+        entered by a user.
+
+        >>> print(URLObject("http://éxample.com:80/påth/sëgment/?que®y=vałue#frågment").encode())
+        http://xn--xample-9ua.com:80/p%C3%A5th/s%C3%ABgment/?que%C2%AEy=va%C5%82ue#fr%C3%A5gment
+        """
+        query = path_encode(self.query, safe='?&=')
+        return self.__replace(query=query) \
+                .with_netloc(self.netloc) \
+                .add_path(self.path) \
+                .with_fragment(self.fragment)
