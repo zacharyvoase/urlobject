@@ -331,3 +331,40 @@ class URLObjectModificationTest(unittest.TestCase):
     def test_without_fragment_removes_fragment(self):
         assert (self.url.without_fragment() ==
                 'https://github.com/zacharyvoase/urlobject?spam=eggs')
+
+
+class IRITest(unittest.TestCase):
+    def test_encode_hostname_idna(self):
+        assert (URLObject.from_iri(u('https://\xe9xample.com/')) ==
+                'https://xn--xample-9ua.com/')
+
+    def test_port_maintained(self):
+        assert (URLObject.from_iri(u('https://\xe9xample.com:80/')) ==
+                'https://xn--xample-9ua.com:80/')
+
+    def test_encode_path(self):
+        assert (URLObject.from_iri(u('https://example.com/p\xe5th/path2')) ==
+                'https://example.com/p%C3%A5th/path2')
+
+    def test_encode_query(self):
+        assert (URLObject.from_iri(u('https://example.com/?k\xe9y=v\xe5l&key2=val2')) ==
+                'https://example.com/?k%C3%A9y=v%C3%A5l&key2=val2')
+
+    def test_encode_fragment(self):
+        assert (URLObject.from_iri(u('https://example.com/#fr\xe5gment')) ==
+                'https://example.com/#fr%C3%A5gment')
+
+    def test_path_params(self):
+        assert (URLObject.from_iri(u('https://example.com/foo;p\xe5rameter')) ==
+                'https://example.com/foo;p%C3%A5rameter')
+
+    def test_quoted_iri(self):
+        """
+        If an IRI already has some quoted characters, they will be maintained as is.
+        """
+        assert (URLObject.from_iri(u('https://example.com/foo%20b\xe5r/')) ==
+            'https://example.com/foo%20b%C3%A5r/')
+
+    def test_quote_other_special_characters(self):
+        assert (URLObject.from_iri(u('https://example.com/foo bar/')) ==
+            'https://example.com/foo%20bar/')
