@@ -22,7 +22,7 @@ class QueryString(text_type):
         for name_value_pair in name_value_pairs:
             # Split the pair string into a naive, encoded (name, value) pair.
             name_value = name_value_pair.split('=', 1)
-            # 'param=' => ('param', None)
+            # 'param' => ('param', None)
             if len(name_value) == 1:
                 name, value = name_value + [None]
             # 'param=value' => ('param', 'value')
@@ -112,13 +112,20 @@ def get_params_list(*args, **kwargs):
 
 def _qs_encode_py2(s):
     """Quote unicode or str using query string rules."""
+    if isinstance(s, (int, long)):
+        # Ease calling with int values which can be trivially stringified.
+        s = unicode(s)
     if isinstance(s, unicode):
+        # urllib.quote_plus() requires str not unicode.
         s = s.encode('utf-8')
     return urllib.quote_plus(s).decode('utf-8')
 
 
 def _qs_encode_py3(s):
     """Quote str or bytes using query string rules."""
+    if isinstance(s, int):
+        # Ease calling with int values which can be trivially stringified.
+        s = str(s)
     # s can be bytes or unicode, urllib.parse.quote() assumes
     # utf-8 if encoding is necessary.
     return urlparse.quote_plus(s)

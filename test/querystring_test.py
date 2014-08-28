@@ -92,6 +92,10 @@ class QueryStringTest(unittest.TestCase):
         s = QueryString('abc=123')
         assert s.add_param('foo', u('\ufffd')) == 'abc=123&foo=%EF%BF%BD'
 
+    def test_add_param_accepts_int(self):
+        s = QueryString('')
+        assert s.add_param('abc', 123) == 'abc=123'
+
     def test_add_param_allows_the_same_parameter_name_to_be_added_twice(self):
         s = QueryString('abc=123')
         assert s.add_param('abc', '456') == 'abc=123&abc=456'
