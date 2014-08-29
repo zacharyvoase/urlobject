@@ -35,6 +35,42 @@ class URLObject(text_type):
     def __repr__(self):
         return u('URLObject(%r)') % (text_type(self),)
 
+    @classmethod
+    def from_iri(klass, iri):
+        """
+        Create a URL from an IRI, which may have non-ascii text it.
+
+        This is probably how you should construct a URLObject if the input is
+        from a user, since users tend to type addresses using their native
+        character sets.
+
+        The domain name will be encoded as per IDNA, and the whole IRI will be
+        encoded to UTF-8 and URL-escaped, as per RFC 3987. The IRI is not
+        checked for conformance with the IRI specification, so this may still
+        accept invalid IRIs and produce invalid URLs.
+
+        Beyond the IRI encoding rules, this also URL-quotes all special
+        characters, so that a space character is replaced by %20, for example.
+        The % character is *not* quoted, because users often copy/paste
+        addresses that are already quoted, and we should not double-quote it.
+
+        >>> print(URLObject.from_iri(u('https://\xe9xample.com/p\xe5th')))
+        https://xn--xample-9ua.com/p%C3%A5th
+        """
+        # This code approximates Section 3.1 of RFC 3987, using the option of
+        # encoding the netloc with IDNA.
+        split = urlparse.urlsplit(iri)
+        netloc = split.netloc.encode('idna').decode('ascii')
+        path = path_encode(split.path.encode('utf-8'), safe='/%;')
+        query = path_encode(split.query.encode('utf-8'), safe='=&%')
+        fragment = path_encode(split.fragment.encode('utf-8'), safe='%')
+        new_components = split._replace(netloc=netloc,
+                                        path=path,
+                                        query=query,
+                                        fragment=fragment,
+                                        )
+        return klass(urlparse.urlunsplit(new_components))
+
     @property
     def scheme(self):
         """
