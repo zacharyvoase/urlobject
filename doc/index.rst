@@ -18,7 +18,8 @@ Installation
 
 Install using ``pip`` from `pypi <http://pypi.python.org/pypi/URLObject>`__.
 There are no dependencies, and the package is pure Python, tested on CPythons
-v2.5–3.3.
+v2.6–3.3. (It probably works on v2.5 as well, but Travis CI no longer supports
+testing on v2.5.)
 
 .. code:: bash
 
