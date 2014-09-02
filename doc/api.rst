@@ -6,7 +6,7 @@ API
     All doctests in this documentation use Python 3.3 syntax.
 
 .. autoclass:: urlobject.URLObject
-   :members: scheme, with_scheme,
+   :members: from_iri, scheme, with_scheme,
       netloc, with_netloc,
       username, with_username, without_username,
       password, with_password, without_password,
