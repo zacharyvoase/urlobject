@@ -36,7 +36,7 @@ class URLObject(text_type):
         return u('URLObject(%r)') % (text_type(self),)
 
     @classmethod
-    def from_iri(klass, iri):
+    def from_iri(cls, iri):
         """
         Create a URL from an IRI, which may have non-ascii text it.
 
@@ -69,7 +69,7 @@ class URLObject(text_type):
                                         query=query,
                                         fragment=fragment,
                                         )
-        return klass(urlparse.urlunsplit(new_components))
+        return cls(urlparse.urlunsplit(new_components))
 
     @property
     def scheme(self):
