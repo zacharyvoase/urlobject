@@ -12,4 +12,8 @@ setup(
     author_email='z@zacharyvoase.com',
     url='http://github.com/zacharyvoase/urlobject',
     packages=find_packages(exclude=('test',)),
+    classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+    ],
 )
