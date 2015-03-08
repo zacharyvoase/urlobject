@@ -119,7 +119,7 @@ class Netloc(text_type):
 
         others = [] if count < 4 else all_domains[1:-2]  # such as ["foo1", "foo"]
 
-        return filter(len, [low] + others + [base] + [high])
+        return list(filter(len, [low] + others + [base] + [high]))
 
     def get_domain(self, domain_level=DOMAIN_LEVEL_BASE):
         return self.domains[domain_level]

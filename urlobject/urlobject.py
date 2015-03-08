@@ -577,7 +577,7 @@ class URLObject(text_type):
 
         >>> print(URLObject("http://www.example.code.google.com").get_domain())
         google
-        >>> from domain_levels import DOMAIN_LEVEL_HIGH
+        >>> from .domain_levels import DOMAIN_LEVEL_HIGH
         >>> print(URLObject("http://www.example.code.google.com").get_domain(DOMAIN_LEVEL_HIGH))
         com
         """
