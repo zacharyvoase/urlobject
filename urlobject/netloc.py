@@ -1,5 +1,6 @@
 from .compat import urlparse
 from .six import text_type, u
+from .domain_levels import DOMAIN_LEVEL_BASE, DOMAIN_LEVEL_LOW
 
 
 class Netloc(text_type):
@@ -99,6 +100,54 @@ class Netloc(text_type):
     def without_port(self):
         """Remove any port number from this netloc."""
         return self.__replace(port=None)
+
+    @property
+    def domains(self):
+        """
+        Domains of the netloc
+        """
+
+        # Example hostname: www.foo1.foo.example.com
+        all_domains = self.hostname.split('.')
+
+        count = len(all_domains)
+
+        high = all_domains[-1]  # such as "com"
+
+        base = '' if count == 1 else all_domains[-2]  # such as "example"
+        low = '' if count == 2 else all_domains[0]  # such as "www"
+
+        others = [] if count < 4 else all_domains[1:-2]  # such as ["foo1", "foo"]
+
+        return filter(len, [low] + others + [base] + [high])
+
+    def get_domain(self, domain_level=DOMAIN_LEVEL_BASE):
+        return self.domains[domain_level]
+
+    def with_domain(self, domain, domain_level=DOMAIN_LEVEL_BASE):
+        domains = self.domains
+        domains[domain_level] = domain
+
+        return self.__replace(hostname='.'.join(domains))
+
+    def without_domain(self, domain_level=DOMAIN_LEVEL_BASE):
+        domains = self.domains
+        del domains[domain_level]
+        return self.__replace(hostname='.'.join(domains))
+
+    @property
+    def subdomain(self):
+        return self.domains[DOMAIN_LEVEL_LOW]
+
+    def add_subdomain(self, subdomain):
+        """Add a new subdomain to this netloc."""
+        return self.__replace(hostname=subdomain + '.' + self.hostname)
+
+    def remove_subdomain(self):
+        """Add a new subdomain to this netloc."""
+        domains = self.domains
+        del domains[DOMAIN_LEVEL_LOW]
+        return self.__replace(hostname='.'.join(domains))
 
     @property
     def __urlsplit(self):
