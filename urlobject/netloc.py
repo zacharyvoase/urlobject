@@ -1,6 +1,6 @@
 from .compat import urlparse
 from .six import text_type, u
-from .domain_levels import DOMAIN_LEVEL_BASE, DOMAIN_LEVEL_LOWER
+from .domain_levels import DOMAIN_LEVEL_SECOND, DOMAIN_LEVEL_LOWER
 
 
 class Netloc(text_type):
@@ -104,35 +104,18 @@ class Netloc(text_type):
     @property
     def domains(self):
         """
-        Domains of the netloc
+        Domains.
         """
 
-        # Example hostname: www.foo1.foo.example.com
-        all_domains = self.hostname.split('.')
+        return list(filter(len, self.hostname.split('.')))
 
-        count = len(all_domains)
-
-        top = all_domains[-1]  # such as "com"
-
-        base = '' if count == 1 else all_domains[-2]  # such as "example"
-        lower = '' if count == 2 else all_domains[0]  # such as "www"
-
-        others = [] if count < 4 else all_domains[1:-2]  # such as ["foo1", "foo"]
-
-        return list(filter(len, [lower] + others + [base] + [top]))
-
-    def get_domain(self, domain_level=DOMAIN_LEVEL_BASE):
+    def get_domain(self, domain_level=DOMAIN_LEVEL_SECOND):
         return self.domains[domain_level]
 
-    def with_domain(self, domain, domain_level=DOMAIN_LEVEL_BASE):
+    def with_domain(self, domain, domain_level=DOMAIN_LEVEL_SECOND):
         domains = self.domains
         domains[domain_level] = domain
 
-        return self.__replace(hostname='.'.join(domains))
-
-    def without_domain(self, domain_level=DOMAIN_LEVEL_BASE):
-        domains = self.domains
-        del domains[domain_level]
         return self.__replace(hostname='.'.join(domains))
 
     @property

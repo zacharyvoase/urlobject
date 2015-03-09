@@ -3,7 +3,7 @@ from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode
 from .ports import DEFAULT_PORTS
 from .query_string import QueryString
-from .domain_levels import DOMAIN_LEVEL_BASE
+from .domain_levels import DOMAIN_LEVEL_SECOND
 from .six import text_type, u
 
 class URLObject(text_type):
@@ -571,7 +571,7 @@ class URLObject(text_type):
         """
         return self.with_netloc(self.netloc.remove_subdomain())
 
-    def get_domain(self, domain_level=DOMAIN_LEVEL_BASE):
+    def get_domain(self, domain_level=DOMAIN_LEVEL_SECOND):
         """
         Getting a domain of this URL by domain_level, which by default points to base level domain.
 
@@ -583,21 +583,13 @@ class URLObject(text_type):
         """
         return self.netloc.get_domain(domain_level=domain_level)
 
-    def with_domain(self, domain, domain_level=DOMAIN_LEVEL_BASE):
+    def with_domain(self, domain, domain_level=DOMAIN_LEVEL_SECOND):
         """
         Add or replace this URL's domain on selected level.
         >>> print(URLObject('http://google.com').with_domain('example'))
         http://example.com
         """
         return self.with_netloc(self.netloc.with_domain(domain, domain_level=domain_level))
-
-    def without_domain(self, domain_level=DOMAIN_LEVEL_BASE):
-        """
-        Remove this URL's domain
-        >>> print(URLObject('http://www.example.code.google.com').without_domain(1))
-        http://www.code.google.com
-        """
-        return self.with_netloc(self.netloc.without_domain(domain_level=domain_level))
 
     def relative(self, other):
         """
