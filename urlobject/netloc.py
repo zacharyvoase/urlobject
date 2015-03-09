@@ -1,6 +1,6 @@
 from .compat import urlparse
 from .six import text_type, u
-from .domain_levels import DOMAIN_LEVEL_BASE, DOMAIN_LEVEL_LOW
+from .domain_levels import DOMAIN_LEVEL_BASE, DOMAIN_LEVEL_LOWER
 
 
 class Netloc(text_type):
@@ -112,14 +112,14 @@ class Netloc(text_type):
 
         count = len(all_domains)
 
-        high = all_domains[-1]  # such as "com"
+        top = all_domains[-1]  # such as "com"
 
         base = '' if count == 1 else all_domains[-2]  # such as "example"
-        low = '' if count == 2 else all_domains[0]  # such as "www"
+        lower = '' if count == 2 else all_domains[0]  # such as "www"
 
         others = [] if count < 4 else all_domains[1:-2]  # such as ["foo1", "foo"]
 
-        return list(filter(len, [low] + others + [base] + [high]))
+        return list(filter(len, [lower] + others + [base] + [top]))
 
     def get_domain(self, domain_level=DOMAIN_LEVEL_BASE):
         return self.domains[domain_level]
@@ -137,7 +137,7 @@ class Netloc(text_type):
 
     @property
     def subdomain(self):
-        return self.domains[DOMAIN_LEVEL_LOW]
+        return self.domains[DOMAIN_LEVEL_LOWER]
 
     def add_subdomain(self, subdomain):
         """Add a new subdomain to this netloc."""
@@ -146,7 +146,7 @@ class Netloc(text_type):
     def remove_subdomain(self):
         """Add a new subdomain to this netloc."""
         domains = self.domains
-        del domains[DOMAIN_LEVEL_LOW]
+        del domains[DOMAIN_LEVEL_LOWER]
         return self.__replace(hostname='.'.join(domains))
 
     @property

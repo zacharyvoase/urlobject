@@ -117,20 +117,20 @@ class NetlocTest(unittest.TestCase):
     def test_get_domain(self):
         assert Netloc('www.github.com').get_domain() == 'github'
         assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_BASE) == 'github'
-        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_LOW) == 'www'
-        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_HIGH) == 'com'
+        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_LOWER) == 'www'
+        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_TOP) == 'com'
 
     def test_with_domain(self):
         assert Netloc('www.github.com').with_domain('foo') == 'www.foo.com'
         assert Netloc('www.github.com').with_domain('foo', domain_levels.DOMAIN_LEVEL_BASE) == 'www.foo.com'
-        assert Netloc('www.github.com').with_domain('www1', domain_levels.DOMAIN_LEVEL_LOW) == 'www1.github.com'
-        assert Netloc('www.github.com').with_domain('org', domain_levels.DOMAIN_LEVEL_HIGH) == 'www.github.org'
+        assert Netloc('www.github.com').with_domain('www1', domain_levels.DOMAIN_LEVEL_LOWER) == 'www1.github.com'
+        assert Netloc('www.github.com').with_domain('org', domain_levels.DOMAIN_LEVEL_TOP) == 'www.github.org'
 
     def test_without_domain(self):
         assert Netloc('www.github.com').without_domain() == 'www.com'
         assert Netloc('www.github.com').without_domain(domain_levels.DOMAIN_LEVEL_BASE) == 'www.com'
-        assert Netloc('www.github.com').without_domain(domain_levels.DOMAIN_LEVEL_LOW) == 'github.com'
-        assert Netloc('www.github.com').without_domain(domain_levels.DOMAIN_LEVEL_HIGH) == 'www.github'
+        assert Netloc('www.github.com').without_domain(domain_levels.DOMAIN_LEVEL_LOWER) == 'github.com'
+        assert Netloc('www.github.com').without_domain(domain_levels.DOMAIN_LEVEL_TOP) == 'www.github'
         assert Netloc('github.com').without_domain() == 'com'
         assert Netloc('github.com').without_domain().with_domain('github2') == 'github2.com'
 
