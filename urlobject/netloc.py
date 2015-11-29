@@ -1,5 +1,5 @@
 from .compat import urlparse
-from .six import text_type, u
+from six import text_type, u
 
 
 class Netloc(text_type):

@@ -4,7 +4,7 @@ import posixpath
 import urllib
 
 from .compat import urlparse
-from .six import text_type, u
+from six import text_type, u
 
 
 class Root(object):

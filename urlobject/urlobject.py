@@ -3,7 +3,7 @@ from .netloc import Netloc
 from .path import URLPath, path_encode, path_decode
 from .ports import DEFAULT_PORTS
 from .query_string import QueryString
-from .six import text_type, u
+from six import text_type, u
 
 class URLObject(text_type):
 
