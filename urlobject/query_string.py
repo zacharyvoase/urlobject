@@ -3,7 +3,7 @@ import re
 import urllib
 
 from .compat import urlparse
-from .six import text_type, string_types, u
+from six import text_type, string_types, u
 
 
 class QueryString(text_type):
