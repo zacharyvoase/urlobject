@@ -93,6 +93,16 @@ class QueryString(text_type):
             qs = qs.add_param(*param)
         return qs
 
+    def del_param_value(self, name, value):
+        """Remove a parameter with the specified value."""
+        params = self.list
+        qs = type(self)('')
+        for (n, v) in params:
+            if n == name and v == value:
+                continue
+            qs = qs.add_param(n, v)
+        return qs
+
 
 def get_params_list(*args, **kwargs):
     """Turn dict-like arguments into an ordered list of pairs."""
