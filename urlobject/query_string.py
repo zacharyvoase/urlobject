@@ -7,8 +7,8 @@ from .compat import urlparse
 from .six import text_type, string_types, u
 
 
-PY3 = sys.version_info[0] == 2
-PY2 = sys.version_info[0] == 3
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
 
 
 class QueryString(text_type):
