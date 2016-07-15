@@ -150,13 +150,13 @@ def _qs_decode_py3(s):
     return urlparse.unquote_plus(s)
 
 
-if PY2:
-    qs_encode = _qs_encode_py2
-    qs_decode = _qs_decode_py2
-    del _qs_encode_py3
-    del _qs_decode_py3
-else:
+if PY3:
     qs_encode = _qs_encode_py3
     qs_decode = _qs_decode_py3
     del _qs_encode_py2
     del _qs_decode_py2
+else:
+    qs_encode = _qs_encode_py2
+    qs_decode = _qs_decode_py2
+    del _qs_encode_py3
+    del _qs_decode_py3
