@@ -1,9 +1,14 @@
 import collections
 import re
+import sys
 import urllib
 
 from .compat import urlparse
 from .six import text_type, string_types, u
+
+
+PY3 = sys.version_info[0] == 2
+PY2 = sys.version_info[0] == 3
 
 
 class QueryString(text_type):
@@ -145,7 +150,7 @@ def _qs_decode_py3(s):
     return urlparse.unquote_plus(s)
 
 
-if hasattr(urllib, 'quote'):
+if PY2:
     qs_encode = _qs_encode_py2
     qs_decode = _qs_decode_py2
     del _qs_encode_py3
