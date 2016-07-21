@@ -1,13 +1,9 @@
 import collections
 import re
-import sys
 import urllib
 
 from .compat import urlparse
-from .six import text_type, string_types, u
-
-
-PY2 = sys.version_info[0] == 2
+from .six import PY2, text_type, string_types, u
 
 
 class QueryString(text_type):

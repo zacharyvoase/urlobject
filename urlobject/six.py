@@ -27,6 +27,8 @@ __author__ = "Benjamin Peterson <benjamin@python.org>"
 __version__ = "1.2.0"
 
 
+PY2 = sys.version_info[0] == 2
+
 # True if we are running on Python 3.
 PY3 = sys.version_info[0] == 3
 
