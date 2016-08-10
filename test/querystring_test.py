@@ -177,3 +177,7 @@ class QueryStringTest(unittest.TestCase):
     def test_del_params_accepts_an_iterable_and_removes_all_listed_parameters(self):
         s = QueryString('abc=123&def=456&xyz=789')
         assert s.del_params(('abc', 'xyz')) == 'def=456'
+
+    def test_del_param_value_removes_the_specified_value_only(self):
+        s = QueryString('abc=123&abc=456&def=789')
+        assert s.del_param_value('abc', '456') == 'abc=123&def=789'
