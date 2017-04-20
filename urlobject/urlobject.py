@@ -541,6 +541,12 @@ class URLObject(text_type):
         http://www.google.com/a/b/c
         """
         return self.__replace(fragment='')
+        
+    def get_next_querystring_union_char(self):
+        if not self.query_list:
+            return '?'
+        else:
+            return '&'
 
     def relative(self, other):
         """
