@@ -1,5 +1,6 @@
 from .compat import urlparse
 from .six import text_type, u
+from .domain_levels import DOMAIN_LEVEL_SECOND, DOMAIN_LEVEL_LOWER
 
 
 class Netloc(text_type):
@@ -99,6 +100,37 @@ class Netloc(text_type):
     def without_port(self):
         """Remove any port number from this netloc."""
         return self.__replace(port=None)
+
+    @property
+    def domains(self):
+        """
+        Domains.
+        """
+
+        return list(filter(len, self.hostname.split('.')))
+
+    def get_domain(self, domain_level=DOMAIN_LEVEL_SECOND):
+        return self.domains[domain_level]
+
+    def with_domain(self, domain, domain_level=DOMAIN_LEVEL_SECOND):
+        domains = self.domains
+        domains[domain_level] = domain
+
+        return self.__replace(hostname='.'.join(domains))
+
+    @property
+    def subdomain(self):
+        return self.domains[DOMAIN_LEVEL_LOWER]
+
+    def add_subdomain(self, subdomain):
+        """Add a new subdomain to this netloc."""
+        return self.__replace(hostname=subdomain + '.' + self.hostname)
+
+    def remove_subdomain(self):
+        """Add a new subdomain to this netloc."""
+        domains = self.domains
+        del domains[DOMAIN_LEVEL_LOWER]
+        return self.__replace(hostname='.'.join(domains))
 
     @property
     def __urlsplit(self):

@@ -4,6 +4,8 @@ from nose.tools import assert_raises
 
 from urlobject.netloc import Netloc
 
+from urlobject import domain_levels
+
 
 class NetlocTest(unittest.TestCase):
 
@@ -108,3 +110,31 @@ class NetlocTest(unittest.TestCase):
 
     def test_without_port_removes_port(self):
         assert Netloc('github.com:443').without_port() == 'github.com'
+
+    def test_domains(self):
+        assert Netloc('www.example1.example.github.com').domains == ['www', 'example1', 'example', 'github', 'com']
+
+    def test_get_domain(self):
+        assert Netloc('www.github.com').get_domain() == 'github'
+        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_SECOND) == 'github'
+        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_LOWER) == 'www'
+        assert Netloc('www.github.com').get_domain(domain_levels.DOMAIN_LEVEL_TOP) == 'com'
+
+    def test_with_domain(self):
+        assert Netloc('www.github.com').with_domain('foo') == 'www.foo.com'
+        assert Netloc('www.github.com').with_domain('foo', domain_levels.DOMAIN_LEVEL_SECOND) == 'www.foo.com'
+        assert Netloc('www.github.com').with_domain('www1', domain_levels.DOMAIN_LEVEL_LOWER) == 'www1.github.com'
+        assert Netloc('www.github.com').with_domain('org', domain_levels.DOMAIN_LEVEL_TOP) == 'www.github.org'
+
+    def test_subdomain(self):
+        assert Netloc('github.com').subdomain == 'github'
+        assert Netloc('example.github.com').subdomain == 'example'
+        assert Netloc('www.example.github.com').subdomain == 'www'
+
+    def test_add_subdomain(self):
+        assert Netloc('github.com').add_subdomain('example') == 'example.github.com'
+        assert Netloc('example.github.com').add_subdomain('www') == 'www.example.github.com'
+        assert Netloc('zack:1234@github.com:443').add_subdomain('example') == 'zack:1234@example.github.com:443'
+
+    def test_remove_subdomain(self):
+        assert Netloc('zack:1234@example.github.com:443').remove_subdomain() == 'zack:1234@github.com:443'
