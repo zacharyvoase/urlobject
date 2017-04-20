@@ -13,6 +13,10 @@ setup(
     url='http://github.com/zacharyvoase/urlobject',
     packages=find_packages(exclude=('test',)),
     classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: Public Domain',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
