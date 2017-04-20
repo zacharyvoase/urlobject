@@ -94,13 +94,10 @@ class QueryString(text_type):
         return qs
 
     def del_param_value(self, name, value):
-        """Remove a parameter with the specified value."""
-        params = self.list
+        params = [(n, v) for n, v in self.list if n != name or v != value]
         qs = type(self)('')
-        for (n, v) in params:
-            if n == name and v == value:
-                continue
-            qs = qs.add_param(n, v)
+        for param in params:
+            qs = qs.add_param(*param)
         return qs
 
 
