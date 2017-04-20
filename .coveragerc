@@ -1,3 +1,10 @@
+[run]
+source =
+  urlobject
+  test
+omit =
+  urlobject/six.py
+
 [report]
 exclude_lines =
   def __repr__
