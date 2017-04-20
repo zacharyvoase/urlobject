@@ -320,6 +320,11 @@ class URLObjectModificationTest(unittest.TestCase):
         assert (url.del_query_params(['foo', 'baz']) ==
                 'https://github.com/zacharyvoase/urlobject#foo')
 
+    def test_del_query_param_value_removes_matching_query_parameters(self):
+        url = URLObject('https://github.com/zacharyvoase/urlobject?foo=bar&baz=spam&foo=qux&foo=bar#foo')
+        assert (url.del_query_param_value('foo', 'bar') ==
+                'https://github.com/zacharyvoase/urlobject?baz=spam&foo=qux#foo')
+
     def test_with_fragment_replaces_fragment(self):
         assert (self.url.with_fragment('part') ==
                 'https://github.com/zacharyvoase/urlobject?spam=eggs#part')

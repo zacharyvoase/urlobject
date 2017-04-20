@@ -504,6 +504,16 @@ class URLObject(text_type):
         """
         return self.with_query(self.query.del_params(params))
 
+    def del_query_param_value(self, name, value):
+        """
+        Remove any and all query parameters with the given name/value pair from
+        the URL.
+
+        >>> print(URLObject("http://www.google.com?a=b&a=c&a=d").del_query_param_value("a", "c"))
+        http://www.google.com?a=b&a=d
+        """
+        return self.with_query(self.query.del_param_value(name, value))
+
     @property
     def fragment(self):
         """

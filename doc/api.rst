@@ -19,6 +19,6 @@ API
       query_list, query_dict, query_multi_dict,
       add_query_param, add_query_params,
       set_query_param, set_query_params,
-      del_query_param, del_query_params,
+      del_query_param, del_query_params, del_query_param_value,
       fragment, with_fragment, without_fragment,
       relative
