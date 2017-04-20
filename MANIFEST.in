@@ -1,4 +1,5 @@
 include .coveragerc
 include doc/*
 include test/*.py
+include tox.ini
 include UNLICENSE

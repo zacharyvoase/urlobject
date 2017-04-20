@@ -1,8 +1,34 @@
 language: python
+
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
-install: pip install nose
-script: nosetests
+  - "3.4"
+  - "3.5"
+  - "3.6"
+
+env:
+  global:
+    - COVERAGE_CMD="coverage run --append"
+    - COVERAGE_DEP="coverage"
+
+matrix:
+  include:
+    - python: "3.2"
+      env: COVERAGE_DEP="coverage<4"
+
+install:
+  # install tox-travis explicitly after tox to avoid
+  # pkg_resources.VersionConflict, see
+  # https://travis-ci.org/scampersand/bienvenue/jobs/196462565
+  # https://github.com/ryanhiebert/tox-travis/issues/26
+  - pip install tox
+  - pip install tox-travis
+  - pip install codecov
+
+script:
+  - tox
+
+after_script:
+  - codecov

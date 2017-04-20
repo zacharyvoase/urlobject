@@ -8,3 +8,5 @@ dist/
 distribute-*.egg
 distribute-*.tar.gz
 doc/.build
+.coverage
+.tox

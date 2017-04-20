@@ -1,7 +1,7 @@
 URLObject 2
 ===========
 
-|Build Status| |PyPI|
+|PyPI| |Build Status| |Coverage Report| |Python Versions|
 
 ``URLObject`` is a utility class for manipulating URLs. The latest
 incarnation of this library builds upon the ideas of its predecessor,
@@ -84,10 +84,20 @@ this library to Python 3, and to
 `vmalloc <https://github.com/vmalloc>`__ for work on the comprehensive
 API documentation and Sphinx setup.
 
-.. _PyPI: https://pypi.python.org/pypi/URLObject
-.. _Travis: http://travis-ci.org/zacharyvoase/urlobject
+.. |PyPI| image:: https://img.shields.io/pypi/v/URLObject.svg?style=plastic
+   :target: PyPI_
 
 .. |Build Status| image:: https://img.shields.io/travis/zacharyvoase/urlobject/master.svg?style=plastic
    :target: Travis_
-.. |PyPI| image:: https://img.shields.io/pypi/v/URLObject.svg?style=plastic
+
+.. |Coverage Report| image:: https://img.shields.io/codecov/c/github/zacharyvoase/urlobject/master.svg?style=plastic
+   :target: CodeCov_
+
+.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/urlobject.svg?style=plastic
    :target: PyPI_
+
+.. _PyPI: https://pypi.python.org/pypi/URLObject
+
+.. _Travis: http://travis-ci.org/zacharyvoase/urlobject?branch=master
+
+.. _CodeCov: https://codecov.io/gh/zacharyvoase/urlobject/branch/master
