@@ -1,1 +1,4 @@
+include .coveragerc
+include doc/*
+include test/*.py
 include UNLICENSE
