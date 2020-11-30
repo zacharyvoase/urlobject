@@ -15,12 +15,6 @@ python:
 env:
   global:
     - COVERAGE_CMD="coverage run --append"
-    - COVERAGE_DEP="coverage"
-
-matrix:
-  include:
-    - python: "3.2"
-      env: COVERAGE_DEP="coverage<4"
 
 install:
   # install tox-travis explicitly after tox to avoid
