@@ -43,7 +43,7 @@ class SphinxDoctestsTest(unittest.TestCase):
         failed = result.failed
         attempted = result.attempted
         self.assertTrue(attempted > 0, "No doctests were found")
-        self.assertEquals(failed, 0, "There are failed doctests")
+        self.assertEqual(failed, 0, "There are failed doctests")
 
 
 class URLObjectRelativeTest(unittest.TestCase):
