@@ -1,6 +1,6 @@
 import unittest
 
-from nose.tools import assert_raises
+from pytest import raises
 
 from urlobject.netloc import Netloc
 
@@ -49,8 +49,8 @@ class NetlocTest(unittest.TestCase):
                 'zack:5678@github.com:443')
 
     def test_with_password_on_a_netloc_with_no_username_raises_ValueError(self):
-        assert_raises(ValueError,
-                      lambda: Netloc('github.com').with_password('1234'))
+        raises(ValueError,
+               lambda: Netloc('github.com').with_password('1234'))
 
     def test_with_auth_with_one_arg_adds_username(self):
         assert (Netloc('github.com').with_auth('zack') ==

@@ -2,7 +2,7 @@ import platform
 import doctest
 import unittest
 
-from nose.tools import assert_raises
+from pytest import raises
 from urlobject import urlobject as urlobject_module
 from urlobject import URLObject
 from urlobject.six import text_type, u, print_
@@ -43,7 +43,7 @@ class SphinxDoctestsTest(unittest.TestCase):
         failed = result.failed
         attempted = result.attempted
         self.assertTrue(attempted > 0, "No doctests were found")
-        self.assertEquals(failed, 0, "There are failed doctests")
+        self.assertEqual(failed, 0, "There are failed doctests")
 
 
 class URLObjectRelativeTest(unittest.TestCase):
@@ -188,7 +188,7 @@ class URLObjectModificationTest(unittest.TestCase):
 
     def test_with_password_raises_ValueError_when_there_is_no_username(self):
         url = URLObject('https://github.com/')
-        assert_raises(ValueError, lambda: url.with_password('1234'))
+        raises(ValueError, lambda: url.with_password('1234'))
 
     def test_with_password_replaces_password(self):
         url = URLObject('https://zack:1234@github.com/')
