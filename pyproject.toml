@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "URLObject"
-version = "2.4.3"
+version = "3.0.0"
 description = "A utility class for manipulating URLs."
 keywords = ["URLObject",]
 readme = "README.rst"
