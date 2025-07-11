@@ -1,4 +1,4 @@
-URLObject 2
+URLObject 3
 ===========
 
 |PyPI| |Build Status| |Coverage Report| |Python Versions|

@@ -23,7 +23,7 @@ classifiers = [ "Development Status :: 5 - Production/Stable",
 
 [[project.authors]]
 name = "Zachary Voase"
-email = "z@zacharyvoase.com"
+email = "zack@meat.io"
 
 [project.urls]
 Homepage = "http://github.com/zacharyvoase/urlobject"

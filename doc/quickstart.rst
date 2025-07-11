@@ -3,7 +3,7 @@ Quickstart
 
 .. note::
 
-    All doctests in this documentation use Python 3.3 syntax.
+    All doctests in this documentation use Python 3 syntax.
 
 ::
 
