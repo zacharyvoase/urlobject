@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "URLObject"
+version = "3.0.0"
+description = "A utility class for manipulating URLs."
+keywords = ["URLObject",]
+readme = "README.rst"
+
+classifiers = [ "Development Status :: 5 - Production/Stable",
+                "Intended Audience :: Developers",
+                "License :: Public Domain",
+                "Programming Language :: Python",
+                "Programming Language :: Python :: 3",
+                "Programming Language :: Python :: 3.8",
+                "Programming Language :: Python :: 3.9",
+                "Programming Language :: Python :: 3.10",
+                "Programming Language :: Python :: 3.11",
+                "Programming Language :: Python :: 3.12",
+                "Programming Language :: Python :: 3.13"]
+
+[[project.authors]]
+name = "Zachary Voase"
+email = "z@zacharyvoase.com"
+
+[project.urls]
+Homepage = "http://github.com/zacharyvoase/urlobject"
